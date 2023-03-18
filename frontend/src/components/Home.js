@@ -1,7 +1,9 @@
+const NoteCard = require("./NoteCard")
+
 const Home = ()=>{
     return (
         <h1>
-            Home
+            <NoteCard content="Hey Bro" />
         </h1>
     )
 }
