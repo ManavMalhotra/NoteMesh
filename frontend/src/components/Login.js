@@ -9,7 +9,6 @@ import { useNavigate } from "react-router-dom"
 const Login = ()=>{
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
-    const [token, setToken] = useState("");
 
     const {name, setName, jwt, setJwt} = useContext(MyContext); 
 
@@ -39,8 +38,9 @@ const Login = ()=>{
             console.log(data);
             setName(data.name)
             setJwt(data.token); // set token state
-            localStorage.setItem("token", data.token); // save token to local storage
             
+            localStorage.setItem("token", data.token); // save token to local storage
+            console.log(jwt)
             navigate("/");
 
           })

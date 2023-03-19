@@ -14,7 +14,6 @@ const Home = ()=>{
           console.log(data[0].important)
           setData(data);
         };
-
       
         getData();
 

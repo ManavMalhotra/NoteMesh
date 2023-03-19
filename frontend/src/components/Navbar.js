@@ -3,7 +3,7 @@ import { useContext } from "react";
 import { MyContext } from "../Context";
 
 const Navbar = () => {
-  const { name, setName, setJwt } = useContext(MyContext);
+  const { name, jwt, setName, setJwt } = useContext(MyContext);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -16,9 +16,12 @@ const Navbar = () => {
       <Link to="/">
         <h1 className="">Home</h1>
       </Link>
-      {name ? (
+      {name && jwt? (
         <>
           <h1>{name}</h1>
+          <Link to="/new-note">
+            <h1 className="">New Note</h1>
+          </Link>
           <h1 onClick={handleLogout} className="cursor-pointer">
             Log Out
           </h1>

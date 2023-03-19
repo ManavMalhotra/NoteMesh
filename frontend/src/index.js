@@ -6,6 +6,8 @@ import Footer from './components/Footer';
 import Home from './components/Home';
 import Login from './components/Login';
 import Register from './components/Register';
+import Edit from './components/Edit';
+import NewNote from './components/NewNote';
 import { MyContext } from './Context';
 import './index.css';
 function App() {
@@ -40,6 +42,14 @@ const router = createBrowserRouter([
       {
         path: '/register',
         element: <Register />,
+      },
+      {
+        path: '/new-note',
+        element: <NewNote />,
+      },
+      {
+        path: '/edit/:id',
+        element: <Edit />,
       },
     ],
   },
