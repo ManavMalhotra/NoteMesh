@@ -1,14 +1,40 @@
-import { Link } from "react-router-dom"
+import { Link } from "react-router-dom";
+import { useContext } from "react";
+import { MyContext } from "../Context";
 
-const Navbar = ()=>{
-    return (
-        <div className="flex justify-around m-3 py-3 border-solid shadow-md" >
-            <Link to="/" > <h1 className="" >Home</h1> </Link>
-            <Link to="/login" > <h1>Login</h1> </Link>
-            <Link to="/register" > <h1>Register</h1> </Link>
+const Navbar = () => {
+  const { name, setName, setJwt } = useContext(MyContext);
 
-        </div>
-    )
-}
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setName("");
+    setJwt("");
+  };
 
-export default Navbar
+  return (
+    <div className="flex justify-around m-3 py-3 border-solid shadow-md">
+      <Link to="/">
+        <h1 className="">Home</h1>
+      </Link>
+      {name ? (
+        <>
+          <h1>{name}</h1>
+          <h1 onClick={handleLogout} className="cursor-pointer">
+            Log Out
+          </h1>
+        </>
+      ) : (
+        <>
+          <Link to="/login">
+            <h1>Login</h1>
+          </Link>
+          <Link to="/register">
+            <h1>Register</h1>
+          </Link>
+        </>
+      )}
+    </div>
+  );
+};
+
+export default Navbar;

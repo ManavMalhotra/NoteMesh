@@ -1,54 +1,48 @@
-import { createBrowserRouter, Outlet, RouterProvider} from "react-router-dom";
-import React from 'react';
-import ReactDOM from 'react-dom/client';
+import React, { useState } from 'react';
+import ReactDOM from 'react-dom';
+import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
+import Home from './components/Home';
+import Login from './components/Login';
+import Register from './components/Register';
+import { MyContext } from './Context';
 import './index.css';
-
-import Home from "./components/Home"
-import Login from "./components/Login"
-import Register from "./components/Register"
-import Navbar from "./components/Navbar"
-import Footer from "./components/Footer"
-
 function App() {
-  
+  const [name, setName] = useState('');
+  const [jwt, setJwt] = useState('');
+
+
   return (
-    <div className="App">
-
-      <Navbar />
-
-      <Outlet />
-
-      <Footer />
-
-    </div>
-  )
+    <MyContext.Provider value={{name, setName, jwt, setJwt}}>
+      <div className="App">
+        <Navbar />
+        <Outlet />
+        <Footer />
+      </div>
+    </MyContext.Provider>
+  );
 }
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: '/',
     element: <App />,
     children: [
       {
-        path: "/",
+        path: '/',
         element: <Home />,
       },
       {
-        path: "/login",
+        path: '/login',
         element: <Login />,
       },
       {
-        path: "/register",
+        path: '/register',
         element: <Register />,
       },
     ],
   },
-])
+]);
 
-
-const root = ReactDOM.createRoot(document.getElementById('root'));
-
-root.render(
-  <RouterProvider router = {router} />
-)
-
+ReactDOM.render(<RouterProvider router={router} />, document.getElementById('root'));

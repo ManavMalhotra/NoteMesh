@@ -1,24 +1,16 @@
-const NoteCard = ({content})=>{
-    return( 
-        <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col my-2">
-        <div className="-mx-3 md:flex mb-6">
-          <div className="md:w-1/3 px-3 mb-6 md:mb-0">
-            <label
-              className="block uppercase tracking-wide text-grey-darker text-xs font-bold mb-2"
-              htmlFor="grid-first-name"
-            >
-              Title
-            </label>
-            <input
-              className="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4 mb-3"
-              id="grid-first-name"
-              type="text"
-              placeholder="Enter title here..."
-            />
-          </div>
-          </div>
-          
-      )
-}
+import {Link} from "react-router-dom"
+const NoteCard = ({ important, content, id }) => {
+  return (
+    <div className="relative inline-block border-solid border-2 border-stone-500 shadow-md rounded-md mx-6 my-6 px-4 py-4 w-64 h-64">
+      <h2 className="text-lg font-semibold mb-2">Important: {important}</h2>
+      <p className="text-gray-700">{content}</p>
+      <Link to={`edit/${id}`}>
+        <button key = {id} className="absolute bottom-0 right-0 m-2 py-1 px-2 bg-gray-200 rounded-md">
+          Edit
+        </button>
+      </Link>
+    </div>
+  );
+};
 
-export default NoteCard
+export default NoteCard;
