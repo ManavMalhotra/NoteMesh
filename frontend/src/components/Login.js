@@ -30,7 +30,7 @@ const Login = ()=>{
         })
         .then(response => {
             if (response.ok) {
-              return response.json(); // parse response data as JSON
+              return response.json();
             } else {
               throw new Error("Network response was not ok.");
             }
