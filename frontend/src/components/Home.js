@@ -1,14 +1,14 @@
 import NoteCard from "./NoteCard"
 
 import {useEffect, useState} from "react"
-
+import Api_Url from "../utils/config"
 const Home = ()=>{
 
     const [data, setData] = useState("")
     
     useEffect(() => {
         const getData = async () => {
-          const response = await fetch("https://manavmalhotra-probable-space-eureka-x46rj6r7q5f59q-3001.preview.app.github.dev/api/notes");
+          const response = await fetch(`${Api_Url}/api/notes`);
           const data = await response.json();
           console.log(data)
           console.log(data[0].important)

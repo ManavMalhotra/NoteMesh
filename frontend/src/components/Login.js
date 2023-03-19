@@ -6,6 +6,7 @@ import { MyContext } from "../Context"
 
 import { useNavigate } from "react-router-dom"
 
+import Api_Url from "../utils/config"
 const Login = ()=>{
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
@@ -17,7 +18,7 @@ const Login = ()=>{
     const submitHandler = ()=>{
         // write a fetch request to the backend to login with username and passwrord and get the token
 
-        const data = fetch("https://manavmalhotra-probable-space-eureka-x46rj6r7q5f59q-3001.preview.app.github.dev/api/login", {
+        const data = fetch(`${Api_Url}/api/login`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

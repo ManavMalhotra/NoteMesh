@@ -1,12 +1,12 @@
 import { useState } from "react"
-
+import Api_Url from "../utils/config"
 const Login = ()=>{
     const [name, setName] = useState("")
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
 
     const submitHandler = ()=>{
-        const data = fetch("https://manavmalhotra-probable-space-eureka-x46rj6r7q5f59q-3001.preview.app.github.dev/api/user", {
+        const data = fetch(`${Api_Url}api/user`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

@@ -2,6 +2,8 @@ import React, { useState, useEffect, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { MyContext } from "../Context";
 
+import Api_Url from "../utils/config"
+
 const EditNote = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -10,7 +12,7 @@ const EditNote = () => {
 
   useEffect(() => {
     // Fetch note content from the backend using note ID
-    fetch(`https://manavmalhotra-probable-space-eureka-x46rj6r7q5f59q-3001.preview.app.github.dev/api/notes/${id}`, {
+    fetch(`${Api_Url}api/notes/${id}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${jwt}`
@@ -34,7 +36,7 @@ const EditNote = () => {
     event.preventDefault();
 
     // Submit updated note content to the backend
-    fetch(`https://manavmalhotra-probable-space-eureka-x46rj6r7q5f59q-3001.preview.app.github.dev/api/notes/${id}`, {
+    fetch(`${Api_Url}api/notes/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
