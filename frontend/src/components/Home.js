@@ -1,10 +1,30 @@
-const NoteCard = require("./NoteCard")
+import NoteCard from "./NoteCard"
 
 const Home = ()=>{
+
+
     return (
-        <h1>
-            <NoteCard content="Hey Bro" />
-        </h1>
+        <div className="flex flex-wrap">
+            <section>
+                <NoteCard  />
+            </section>
+
+            <section>
+                <NoteCard  />
+            </section>
+
+            <section>
+                <NoteCard />
+            </section>
+            <section>
+                <NoteCard />
+            </section>
+            <section>
+                <NoteCard />
+            </section>
+            
+            
+        </div>
     )
 }
 
