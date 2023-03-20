@@ -6,8 +6,12 @@ import { MyContext } from "../Context"
 
 import { useNavigate } from "react-router-dom"
 
-import Api_Url from "../utils/config"
+import API_URL from "../utils/config"
+
+console.log(API_URL)
+
 const Login = ()=>{
+    
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
 
@@ -16,9 +20,7 @@ const Login = ()=>{
     const navigate = useNavigate();
 
     const submitHandler = ()=>{
-        // write a fetch request to the backend to login with username and passwrord and get the token
-
-        const data = fetch(`${Api_Url}/api/login`, {
+        const data = fetch(`${API_URL}/api/login`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

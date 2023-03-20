@@ -2,14 +2,14 @@ import { Link } from "react-router-dom";
 import { useContext } from "react";
 import { MyContext } from "../Context";
 
-import Api_Url from "../utils/config"
+import API_URL from "../utils/config"
 
 const NoteCard = ({ important, content, id }) => {
 
   const { jwt } = useContext(MyContext);
 
   const handleDelete = () => {
-      fetch(`${Api_Url}/api/notes/${id}`, {
+      fetch(`${API_URL}/api/notes/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${jwt}`

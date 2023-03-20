@@ -31,34 +31,6 @@ app.use('/api/login', loginRouter)
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-app.get("/",(req,res)=>{
-
-	let form = `
-	<h1>Login</h1>
-	<form action="/api/login" method="POST">
-		<input type="text" name="username" id="username" placeholder="username"><br>
-		<input type="text" name="password" id="password" placeholder="password">
-		<input type="submit"></input>
-	</form>
-	<br>
-	<h1>Register</h1>
-	<form action="/api/user" method="POST">
-		<input type="text" name="name" id="name" placeholder="Name"><br>
-		<input type="text" name="username" id="username" placeholder="username"><br>
-		<input type="text" name="password" id="password" placeholder="password">
-		
-		<input type="submit"></input>
-	</form>
-	<br>
-	<form action="/api/notes" method="POST">
-		<input type="text" name="content" id="content" placeholder="content"><br>
-		<input type="text" name="important" id="important" placeholder="important">
-		
-		<input type="submit"></input>
-	</form>`
-	res.send(form)
-})
-
 app.use((req, res, next) => {
 	res.header('Access-Control-Allow-Origin', '*');
 	res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');

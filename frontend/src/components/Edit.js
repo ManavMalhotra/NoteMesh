@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { MyContext } from "../Context";
 
-import Api_Url from "../utils/config"
+import API_URL from "../utils/config"
 
 const EditNote = () => {
   const { id } = useParams();
@@ -11,8 +11,8 @@ const EditNote = () => {
   const [noteContent, setNoteContent] = useState("");
 
   useEffect(() => {
-    // Fetch note content from the backend using note ID
-    fetch(`${Api_Url}api/notes/${id}`, {
+    
+    fetch(`${API_URL}/api/notes/${id}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${jwt}`

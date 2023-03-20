@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import { MyContext } from "../Context";
 import { useNavigate } from "react-router-dom";
 
-import Api_Url from "../utils/config"
+import API_URL from "../utils/config"
 
 const NewNote = () => {
 
@@ -21,7 +21,7 @@ const NewNote = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    fetch(`${Api_Url}/api/notes`, {
+    fetch(`${API_URL}/api/notes`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

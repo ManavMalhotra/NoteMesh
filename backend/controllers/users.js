@@ -1,8 +1,45 @@
+const dotenv = require('dotenv').config()
+const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const userRouter = require('express').Router()
 
 const Note = require('../models/note')
 const User = require('../models/user')
+
+const getTokenFrom = (req) => {
+	const authorization = req.get('authorization')
+	if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
+	  return authorization.substring(7)
+	}
+	return null
+  }
+  
+
+userRouter.get('/', async (req,res)=>{
+	try{
+	const token = getTokenFrom(req)
+
+	const decodedToken = jwt.verify(token, process.env.SECRET)
+
+	if (!token || !decodedToken.id) {
+	  return res.status(401).json({ error: 'token missing or invalid' })
+	}
+  
+	const user = await User.findById(decodedToken.id)
+
+		user.populate('notes', { })
+
+		console.log(user)
+		
+		res.status(200).json(user.notes)
+	
+
+	
+}catch(error){
+	res.status(500).json({error: 'something went wrong'})
+}
+  
+})
 
 userRouter.get('/', async (req,response)=>{
 	const users = await User

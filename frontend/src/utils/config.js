@@ -1,5 +1,3 @@
-const Api_Url = process.env.API_URL;
+const API_URL = "https://manavmalhotra-probable-space-eureka-x46rj6r7q5f59q-3001.preview.app.github.dev";
 
-export default {
-  Api_Url,
-};
+export default API_URL; 

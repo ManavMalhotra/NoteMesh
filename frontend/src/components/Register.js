@@ -1,12 +1,16 @@
 import { useState } from "react"
-import Api_Url from "../utils/config"
+import API_URL from "../utils/config"
+
+import { useNavigate } from "react-router-dom"
 const Login = ()=>{
     const [name, setName] = useState("")
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
 
+    const navigate = useNavigate()
+
     const submitHandler = ()=>{
-        const data = fetch(`${Api_Url}api/user`, {
+        const data = fetch(`${API_URL}/api/user`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -26,6 +30,8 @@ const Login = ()=>{
           })
           .then(data => {
             console.log(data);
+
+            navigate("/")
 
             // setToken(data.token); // set token state
             localStorage.setItem("token", data.token); // save token to local storage
