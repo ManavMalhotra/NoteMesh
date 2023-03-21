@@ -8,7 +8,7 @@ const Home = ()=>{
     
     useEffect(() => {
         const getData = async () => {
-          const response = await fetch(`${API_URL}/user`);
+          const response = await fetch(`${API_URL}/api/notes`);
           const data = await response.json();
           console.log(data)
           console.log(data[0].important)

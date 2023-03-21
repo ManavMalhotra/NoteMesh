@@ -25,13 +25,17 @@ userRouter.get('/', async (req,res)=>{
 	  return res.status(401).json({ error: 'token missing or invalid' })
 	}
   
-	const user = await User.findById(decodedToken.id)
+	// const user = await User.findById(decodedToken.id)
 
-		user.populate('notes', { })
+	// 	user.populate('notes', { })
 
-		console.log(user)
+	// 	console.log(user)
 		
-		res.status(200).json(user.notes)
+	// 	res.status(200).json(user.notes)
+
+	const user = await User.findById(decodedToken.id).populate('notes', { content: 1, date: 1 })
+
+	res.status(200).json(user.notes)
 	
 
 	

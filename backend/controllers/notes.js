@@ -18,6 +18,7 @@ notesRouter.get('/', async (request, response) => {
   const notes = await Note
     .find({})
     .populate('user', { username: 1, name: 1 })
+    console.log(notes)
 
     response.status(200).json(notes)
 })
@@ -75,6 +76,5 @@ notesRouter.put('/:id', (request, response, next) => {
     })
     .catch(error => next(error))
 })
-
 
 module.exports = notesRouter
