@@ -15,12 +15,17 @@ const getTokenFrom = req => {
 }
 
 notesRouter.get('/', async (request, response) => {
+  const token = getTokenFrom(request)
+  const decoded = jwt.verify(token, process.env.SECRET)
   const notes = await Note
     .find({})
     .populate('user', { username: 1, name: 1 })
-    console.log(notes)
 
-    response.status(200).json(notes)
+  const userNotes = notes.filter(note => note.user._id.toString() === decoded.id)
+  console.log(userNotes)
+
+    response.status(200).json(userNotes)
+    
 })
 
 notesRouter.get('/:id', async (request, response) => {

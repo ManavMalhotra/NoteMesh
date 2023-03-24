@@ -1,43 +1,72 @@
-import { Link } from "react-router-dom";
-import { useContext } from "react";
-import { MyContext } from "../Context";
+import { Link } from "react-router-dom"
+import { useContext, useEffect, useState } from "react"
+import { AuthContext } from "../AuthContext"
 
 const Navbar = () => {
-  const { name, jwt, setName, setJwt } = useContext(MyContext);
+  const { user, setUser} = useContext(AuthContext)
+
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    setName("");
-    setJwt("");
+    localStorage.removeItem("token")
+    setUser({
+      name: "",
+      token: "",
+    })
   };
-
   return (
-    <div className="flex justify-around m-3 py-3 border-solid shadow-md">
-      <Link to="/">
-        <h1 className="">Home</h1>
-      </Link>
-      {name && jwt? (
-        <>
-          <h1>{name}</h1>
-          <Link to="/new-note">
-            <h1 className="">New Note</h1>
+    <nav className="bg-blue-500 px-4 py-3">
+      <div className="flex items-center justify-between">
+        <Link to="/" className="text-white font-bold text-xl">
+          Sample Logo
+        </Link>
+        <div className="flex">
+          <Link
+            to="/"
+            className="text-white font-medium mx-3 hover:underline"
+          >
+            Home
           </Link>
-          <h1 onClick={handleLogout} className="cursor-pointer">
-            Log Out
-          </h1>
-        </>
-      ) : (
-        <>
-          <Link to="/login">
-            <h1>Login</h1>
-          </Link>
-          <Link to="/register">
-            <h1>Register</h1>
-          </Link>
-        </>
-      )}
-    </div>
-  );
-};
+          {
+            (!user.auth) ? 
+            (
+              <>
+                <Link
+                  to="/login"
+                  className="text-white font-medium mx-3 hover:underline" >
+                  Login
+                </Link>
 
-export default Navbar;
+                <Link
+                  to="/signup"
+                  className="text-white font-medium mx-3 hover:underline"
+                >
+                Sign up
+                </Link>
+              </>
+            ) 
+            : 
+            (
+              <>
+                <Link
+                  to="/new-note" 
+                  className="text-white font-medium mx-3 hover:underline">
+                  {user.name}
+                </Link>
+                
+                <Link
+                  className="text-white font-medium mx-3 hover:underline">
+                  Logout
+                </Link>
+          
+              </>
+            )
+          }
+
+        </div>
+      </div>
+    </nav>
+  );
+
+}
+
+export default Navbar

@@ -8,7 +8,8 @@ const EditNote = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { jwt } = useContext(MyContext);
-  const [noteContent, setNoteContent] = useState("");
+  const [content, setContent] = useState("");
+  const [important, setImportant] = useState(false);
 
   useEffect(() => {
     
@@ -25,7 +26,7 @@ const EditNote = () => {
         return response.json();
       })
       .then((data) => {
-        setNoteContent(data.content);
+        setContent(data.content);
       })
       .catch((error) => {
         console.error(error);
@@ -36,13 +37,13 @@ const EditNote = () => {
     event.preventDefault();
 
     // Submit updated note content to the backend
-    fetch(`${Api_Url}api/notes/${id}`, {
+    fetch(`${API_URL}/api/notes/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${jwt}`
       },
-      body: JSON.stringify({ content: noteContent })
+      body: JSON.stringify({ content: content })
     })
       .then((response) => {
         if (!response.ok) {
@@ -60,28 +61,42 @@ const EditNote = () => {
   };
 
   return (
-    <div className="container mx-auto my-4">
-      <h1 className="text-3xl font-bold mb-4">Edit Note</h1>
+    <div className="bg-white rounded-lg shadow-md p-6 mb-6 w-full">
+      <h2 className="text-lg font-medium mb-3">Add New Note</h2>
       <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label className="block text-gray-700 font-bold mb-2" htmlFor="noteContent">
-            Note Content
+
+        <div className="mb-3">
+          <label htmlFor="content" className="block text-gray-700 font-medium mb-2">
+            Content
           </label>
           <textarea
-            id="noteContent"
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            rows="8"
-            value={noteContent}
-            onChange={(event) => setNoteContent(event.target.value)}
+            id="content"
+            value={content}
+            onChange={e => setContent(e.target.value)}
+            className="border border-gray-300 rounded px-3 py-2 w-full"
             required
-          />
+          ></textarea>
         </div>
-        <button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          type="submit"
-        >
-          Update Note
-        </button>
+        <div className="mb-3">
+          <label htmlFor="important" className="inline-flex items-center">
+            <input
+              type="checkbox"
+              id="important"
+              checked={important}
+              onChange={e => setImportant(e.target.checked)}
+              className="form-checkbox h-5 w-5 text-blue-500"
+            />
+            <span className="ml-2 text-gray-700 font-medium">Mark as Important</span>
+          </label>
+        </div>
+        <div className="flex justify-end">
+          <button
+            type="submit"
+            className="bg-blue-500 hover:bg-blue-700 text-white font-medium rounded py-2 px-4"
+          >
+            Save
+          </button>
+        </div>
       </form>
     </div>
   );

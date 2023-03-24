@@ -2,7 +2,7 @@ import { useState } from "react"
 
 import { useContext } from "react"
 
-import { MyContext } from "../Context"
+import {AuthContext} from "../AuthContext"
 
 import { useNavigate } from "react-router-dom"
 
@@ -15,7 +15,7 @@ const Login = ()=>{
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
 
-    const {name, setName, jwt, setJwt} = useContext(MyContext); 
+    const {user, setUser} = useContext(AuthContext) 
 
     const navigate = useNavigate();
 
@@ -38,18 +38,21 @@ const Login = ()=>{
             }
           })
           .then(data => {
-            console.log(data);
-            setName(data.name)
-            setJwt(data.token); // set token state
-            
-            localStorage.setItem("token", data.token); // save token to local storage
-            console.log(jwt)
-            navigate("/");
+            setUser({
+                name: data.name,
+                token: data.token,
+                auth: true
+            })
+            localStorage.setItem("token", data.token); 
+            localStorage.setItem("name", data.name);
 
+            navigate("/");
           })
           .catch(error => {
             console.error(error);
           });
+
+          console.log(user.token)
 
 
     }
@@ -70,8 +73,6 @@ const Login = ()=>{
                 </label>
                 <input onChange={(e)=>setPassword(e.target.value)} type="password" className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
             </div>
-
-
             <button onClick={submitHandler} type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"> Sign In</button>
         </div>
     )

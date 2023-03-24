@@ -8,21 +8,19 @@ import Login from './components/Login';
 import Register from './components/Register';
 import Edit from './components/Edit';
 import NewNote from './components/NewNote';
-import { MyContext } from './Context';
+import { AuthProvider } from './AuthContext';
 import './index.css';
-function App() {
-  const [name, setName] = useState('');
-  const [jwt, setJwt] = useState('');
 
+function App() {
 
   return (
-    <MyContext.Provider value={{name, setName, jwt, setJwt}}>
+    <AuthProvider>
       <div className="App">
         <Navbar />
         <Outlet />
         <Footer />
       </div>
-    </MyContext.Provider>
+    </AuthProvider>
   );
 }
 
@@ -40,7 +38,7 @@ const router = createBrowserRouter([
         element: <Login />,
       },
       {
-        path: '/register',
+        path: '/signup',
         element: <Register />,
       },
       {

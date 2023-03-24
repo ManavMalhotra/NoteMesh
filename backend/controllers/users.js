@@ -25,15 +25,9 @@ userRouter.get('/', async (req,res)=>{
 	  return res.status(401).json({ error: 'token missing or invalid' })
 	}
   
-	// const user = await User.findById(decodedToken.id)
+	const user = await User.find({}).populate('notes', { content: 1, date: -1 })
 
-	// 	user.populate('notes', { })
-
-	// 	console.log(user)
-		
-	// 	res.status(200).json(user.notes)
-
-	const user = await User.findById(decodedToken.id).populate('notes', { content: 1, date: 1 })
+	console.log(user.notes)
 
 	res.status(200).json(user.notes)
 	
@@ -45,14 +39,14 @@ userRouter.get('/', async (req,res)=>{
   
 })
 
-userRouter.get('/', async (req,response)=>{
-	const users = await User
-    .find({})
-    .populate('notes', { content: 1, date: 1 })
+// userRouter.get('/', async (req,response)=>{
+// 	const users = await User
+//     .find({})
+//     .populate('notes', { content: 1, date: 1 })
 
-  response.status(200).json(users)
+//   response.status(200).json(users)
 
-})
+// })
 
 userRouter.post('/', async (req,response)=>{
 

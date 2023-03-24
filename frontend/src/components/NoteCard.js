@@ -1,18 +1,18 @@
 import { Link } from "react-router-dom";
 import { useContext } from "react";
-import { MyContext } from "../Context";
+import { AuthContext } from "../AuthContext";
 
 import API_URL from "../utils/config"
 
-const NoteCard = ({ important, content, id }) => {
+const NoteCard = ({ content, id , author}) => {
 
-  const { jwt } = useContext(MyContext);
+  const { user } = useContext(AuthContext);
 
-  const handleDelete = () => {
+  const onDelete = () => {
       fetch(`${API_URL}/api/notes/${id}`, {
         method: "DELETE",
         headers: {
-          Authorization: `Bearer ${jwt}`
+          Authorization: `Bearer ${user.token}`
         }
       })
         .then((response) => {
@@ -25,23 +25,29 @@ const NoteCard = ({ important, content, id }) => {
     }
   
 
-  return (
-    <div className="relative inline-block border-solid border-2 border-stone-500 shadow-md rounded-md mx-6 my-6 px-4 py-4 w-64 h-64">
-      <h2 className="text-lg font-semibold mb-2">Important: {important}</h2>
-      <p className="text-gray-700">{content}</p>
-      <div className="absolute bottom-0 right-0 m-2 space-x-2">
-        <Link to={`edit/${id}`}>
-          <button className="py-1 px-2 bg-gray-200 rounded-md">Edit</button>
-        </Link>
-        <button
-          key={`delete/${id}`} className="py-1 px-2 bg-red-500 text-white rounded-md"
-          onClick={handleDelete}
-        >
-          Delete
-        </button>
+    return (
+      <div className="bg-white rounded-lg shadow-md p-6 mb-6 w-full">
+        <div className="flex justify-between items-center mb-3">
+          <h3 className="text-lg font-medium">Harcdcoded</h3>
+          <div className="flex">
+            <Link to={`/edit/${id}`}>
+            <button
+              className="text-blue-500 font-medium mr-4 hover:text-blue-700"
+            >
+              Edit
+            </button>
+            </Link>
+            <button
+              onClick={onDelete}
+              className="text-red-500 font-medium hover:text-red-700"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+        <p className="text-gray-700">{content}</p>
       </div>
-    </div>
-  );
-};
+    );
+    };
 
 export default NoteCard;
