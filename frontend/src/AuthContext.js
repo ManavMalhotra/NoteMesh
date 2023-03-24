@@ -7,20 +7,24 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState({
-    name: '',
-    token: '',
-    auth: false,
+  const [user, setUser] = useState(() => {
+    const storedUser = localStorage.getItem('user');
+    return storedUser ? JSON.parse(storedUser) : {
+      name: '',
+      token: '',
+      auth: false,
+    }
   });
 
   useEffect(() => {
-  },[])
+    localStorage.setItem('user', JSON.stringify(user));
+  }, [user]);
 
 
-  
 
-
-  return (<AuthContext.Provider value={{user, setUser}}>
-    {children}
-    </AuthContext.Provider>)
-};
+  return (
+      <AuthContext.Provider value={{user, setUser}}>
+        {children}
+      </AuthContext.Provider>
+  )
+}

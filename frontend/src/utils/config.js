@@ -1,3 +1,3 @@
-const API_URL = "https://manavmalhotra-probable-space-eureka-x46rj6r7q5f59q-3001.preview.app.github.dev";
+const API_URL = "http://localhost:3001";
 
 export default API_URL; 

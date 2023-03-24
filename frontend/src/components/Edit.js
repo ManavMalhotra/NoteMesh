@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { MyContext } from "../Context";
+import { AuthContext } from "../AuthContext";
 
 import API_URL from "../utils/config"
 
 const EditNote = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { jwt } = useContext(MyContext);
+  const { user } = useContext(AuthContext);
   const [content, setContent] = useState("");
   const [important, setImportant] = useState(false);
 
@@ -16,7 +16,7 @@ const EditNote = () => {
     fetch(`${API_URL}/api/notes/${id}`, {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${jwt}`
+        Authorization: `Bearer ${user.token}`
       }
     })
       .then((response) => {
@@ -31,7 +31,7 @@ const EditNote = () => {
       .catch((error) => {
         console.error(error);
       });
-  }, [id, jwt]);
+  },);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -41,7 +41,7 @@ const EditNote = () => {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${jwt}`
+        Authorization: `Bearer ${user.token}`
       },
       body: JSON.stringify({ content: content })
     })

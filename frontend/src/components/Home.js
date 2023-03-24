@@ -9,67 +9,77 @@ import { AuthContext } from "../AuthContext"
 
 import Login from "./Login"
 
-const Home = ()=>{
-    const [data, setData] = useState("")
+import Carousel from 'react-multi-carousel';
+import 'react-multi-carousel/lib/styles.css';
 
-    const {user, setUser} = useContext(AuthContext)
+const Home = () => {
+  const [notes, setNotes] = useState([]);
+  const [tags, setTags] = useState([]);
+  const {user, setUser} = useContext(AuthContext);
 
-    const [token, setToken] = useState("")
+  useEffect(() => {
+    const fetchNotes = async () => {
+      const res = await axios.get(`${API_URL}/api/notes`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
+      });
+      setNotes(res.data);
+      const allTags = res.data.reduce((acc, note) => [...acc, ...note.tags], []);
+      setTags([...new Set(allTags)]);
+    };
 
+    fetchNotes();
+  }, [user.token]);
 
-    
+  const handleTagClick = (tag) => {
+    const filteredNotes = notes.filter((note) => note.tags.includes(tag));
+    setNotes(filteredNotes);
+  };
 
-    useEffect(() => {
+  return (
+    <div className="flex flex-col">
+      <div className="flex flex-wrap justify-center mb-4">
+        {tags.map((tag) => (
+          <button
+            key={tag}
+            className="bg-gray-200 hover:bg-gray-300 px-2 py-1 rounded-full text-sm font-medium text-gray-700 mr-2 mb-2"
+            onClick={() => handleTagClick(tag)}
+          >
+            {tag}
+          </button>
+        ))}
+      </div>
+      <Carousel
+  responsive={{
+    desktop: {
+      breakpoint: { max: 3000, min: 1024 },
+      items: 3,
+    },
+    tablet: {
+      breakpoint: { max: 1024, min: 464 },
+      items: 2,
+    },
+    mobile: {
+      breakpoint: { max: 464, min: 0 },
+      items: 1,
+    },
+  }}
+>
+        {notes.map((note) => (
+          <div key={note._id}>
+            <NoteCard
+              important={note.important}
+              content={note.content}
+              id={note._id}
+              author={note.user.name}
+            />
+          </div>
+        ))}
+      </Carousel>
+    </div>
+  );
+};
 
-    setToken(localStorage.getItem('token'))
-        const getData = async () => {
-            const response = await axios.get(`${API_URL}/api/notes`, {
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `bearer ${token}`
-                }
-            })
-        //   const response = await fetch(`${API_URL}/api/notes`, {
-        //         method: "GET",
-        //         headers: {
-        //             "Content-Type": "application/json",
-        //             "Authorization": `bearer ${token}`
-        //         }
-        //     });
-          const data = await response.json();
-          console.log(data)
-          setData(data);      
-        }
-      
-        getData();
-
-    }, []);
-
-    return (
-        <>
-            {
-                (true) ? 
-                    (
-                        <div className="flex flex-wrap">
-                            {Array.from(data).map(info => (
-                                <NoteCard 
-                                    key={info._id}
-                                    important={info.important}
-                                    content={info.content}
-                                    id={info._id}
-                                    author={info.user.name}
-                                />
-                            ))
-                            }
-                        </div>
-                    ) : 
-                        (
-                            <Login />
-                        )
-            }
-        </>
-    )
-    
-}
-
-export default Home
+export default Home;

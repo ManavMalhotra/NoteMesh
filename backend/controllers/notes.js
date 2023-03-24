@@ -16,15 +16,24 @@ const getTokenFrom = req => {
 
 notesRouter.get('/', async (request, response) => {
   const token = getTokenFrom(request)
-  const decoded = jwt.verify(token, process.env.SECRET)
-  const notes = await Note
-    .find({})
-    .populate('user', { username: 1, name: 1 })
+  if (token !== ""){
+    try{
+      const decoded = jwt.verify(token, process.env.SECRET)
+       const notes = await Note
+      .find({})
+      .populate('user', { username: 1, name: 1 })
 
-  const userNotes = notes.filter(note => note.user._id.toString() === decoded.id)
-  console.log(userNotes)
+      const userNotes = notes.filter(note => note.user._id.toString() === decoded.id)
+      console.log(userNotes)
 
-    response.status(200).json(userNotes)
+      response.status(200).json(userNotes)
+    }catch(e){
+      console.log(e);
+    }
+  }else{
+    response.status(404).send("Something went wrong")
+  }
+ 
     
 })
 

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "../AuthContext";
 
 import API_URL from "../utils/config"
@@ -7,6 +7,14 @@ import API_URL from "../utils/config"
 const NoteCard = ({ content, id , author}) => {
 
   const { user } = useContext(AuthContext);
+  const [isHover, setIsHover] = useState(false);
+    const gradientColors = isHover ? 'bg-gradient-to-tr from-blue-300 to-purple-400' : 'bg-gradient-to-tr from-white to-gray-300';
+
+
+    const handleCardClick = () => {
+    // Handle opening of full note content here
+  };
+
 
   const onDelete = () => {
       fetch(`${API_URL}/api/notes/${id}`, {
@@ -26,27 +34,16 @@ const NoteCard = ({ content, id , author}) => {
   
 
     return (
-      <div className="bg-white rounded-lg shadow-md p-6 mb-6 w-full">
-        <div className="flex justify-between items-center mb-3">
-          <h3 className="text-lg font-medium">Harcdcoded</h3>
-          <div className="flex">
-            <Link to={`/edit/${id}`}>
-            <button
-              className="text-blue-500 font-medium mr-4 hover:text-blue-700"
-            >
-              Edit
-            </button>
-            </Link>
-            <button
-              onClick={onDelete}
-              className="text-red-500 font-medium hover:text-red-700"
-            >
-              Delete
-            </button>
-          </div>
-        </div>
-        <p className="text-gray-700">{content}</p>
+
+          <div className={`relative w-72 h-52 rounded-lg shadow-lg overflow-hidden ${gradientColors} p-4`} onClick={handleCardClick} onMouseEnter={() => setIsHover(true)} onMouseLeave={() => setIsHover(false)}>
+      <h2 className="text-xl font-medium mb-2">"Hardcoded TITLE"</h2>
+      <p className="text-gray-700">{content.substring(0, 100)}</p>
+      <div className="absolute bottom-0 left-0 w-full p-4">
+        <p className="text-sm text-gray-600">Last updated: {new Date().toLocaleDateString()}</p>
       </div>
+    </div>
+
+
     );
     };
 

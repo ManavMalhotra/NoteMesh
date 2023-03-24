@@ -1,91 +1,118 @@
 import { useContext, useState } from "react";
-import { MyContext } from "../Context";
+import { AuthContext } from "../AuthContext";
 import { useNavigate } from "react-router-dom";
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+
+import axios from "axios"
 
 import API_URL from "../utils/config"
 
 const NewNote = () => {
+
+  const {user, setUser} = useContext(AuthContext);
+  const [tags, setTags] = useState([])
+  const [content, setContent] = useState("");
+  const [important, setImportant] = useState(false);
+
 
   const navigate = useNavigate();
 
   if (!localStorage.getItem('token')) {
     window.location.href = '/login';
   }
-  const storedToken = localStorage.getItem('token');
-  const jwt = storedToken;
   
+  const handleContentChange = (value) => {
+    setContent(value);
+  }
 
-  const [content, setContent] = useState("");
-  const [important, setImportant] = useState(false);
+  const handleTagChange = (event) => {
+  const newTag = event.target.value.trim()
+    if (event.key === 'Enter' && newTag !== '' && !tags.includes(newTag)) {
+      setTags([...tags, newTag])
+      event.target.value = ''
+    }
+  }
+
+  const handleTagDelete = (index) => {
+    const newTags = [...tags]
+    newTags.splice(index, 1)
+    setTags(newTags)
+  }
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    fetch(`${API_URL}/api/notes`, {
-      method: "POST",
+    console.log(tags)
+
+    const newNote = {
+      content,
+      tags: JSON.stringify(tags)
+    }
+
+    
+    axios.post(`${API_URL}/api/notes`, newNote, {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${jwt}`,
-      },
-      body: JSON.stringify({ content, important }),
+        Authorization: `Bearer ${user.token}`
+    }})
+    .then(response => {
+      console.log(response.data)
+      setTags([])
+      setContent('')
+      navigate("/")
     })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to create new note");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        console.log("New note created:", data);
-        setContent("");
-        setImportant(false);
-        navigate("/")
-        
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    .catch(error => console.log(error))
+
+
+
+
   };
-
-
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 mb-6 w-full">
-      <h2 className="text-lg font-medium mb-3">Add New Note</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-3">
-          <label htmlFor="content" className="block text-gray-700 font-medium mb-2">
-            Content
-          </label>
-          <textarea
-            id="content"
-            value={content}
-            onChange={e => setContent(e.target.value)}
-            className="border border-gray-300 rounded px-3 py-2 w-full"
-            required
-          ></textarea>
+
+        <div className="container mx-F my-4 max-w-full mx-auto">
+          <div className="flex flex-wrap justify-between">
+            <div className="w-full lg:w-3/4 mb-4 lg:mr-4">
+              <ReactQuill
+                value={content}
+                onChange={handleContentChange}
+                placeholder="Take a note..."
+                modules={{
+                  toolbar: [
+                    [{ header: [1, 2, 3, false] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ color: [] }, { background: [] }],
+                    [{ align: [] }],
+                    [{ list: 'ordered' }, { list: 'bullet' }],
+                    ['link', 'image'],
+                    ['clean'],
+                  ],
+                }}
+              />
+            </div>
+        <div className="w-full lg:w-1/4">
+          <div className="flex flex-wrap items-center mb-2">
+            {tags.map((tag, index) => (
+              <div key={index} className="px-2 py-1 bg-gray-300 rounded-full mr-2 mb-2">
+                {tag}
+                <button onClick={() => handleTagDelete(index)} className="ml-2">
+                  x
+                </button>
+              </div>
+            ))}
+          </div>
+          <input type="text" className="w-full border border-gray-400 rounded py-2 px-3" placeholder="Add tags..." onKeyUp={handleTagChange} />
         </div>
-        <div className="mb-3">
-          <label htmlFor="important" className="inline-flex items-center">
-            <input
-              type="checkbox"
-              id="important"
-              checked={important}
-              onChange={e => setImportant(e.target.checked)}
-              className="form-checkbox h-5 w-5 text-blue-500"
-            />
-            <span className="ml-2 text-gray-700 font-medium">Mark as Important</span>
-          </label>
-        </div>
-        <div className="flex justify-end">
-          <button
-            type="submit"
-            className="bg-blue-500 hover:bg-blue-700 text-white font-medium rounded py-2 px-4"
-          >
-            Save
-          </button>
-        </div>
-      </form>
+      </div>
+      <button
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
+        onClick={handleSubmit}
+      >
+        Submit
+      </button>
     </div>
+
+
   );
 };
 

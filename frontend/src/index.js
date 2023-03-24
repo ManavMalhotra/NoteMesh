@@ -14,6 +14,7 @@ import './index.css';
 function App() {
 
   return (
+    <React.StrictMode>
     <AuthProvider>
       <div className="App">
         <Navbar />
@@ -21,6 +22,7 @@ function App() {
         <Footer />
       </div>
     </AuthProvider>
+    </React.StrictMode>
   );
 }
 
@@ -29,10 +31,14 @@ const router = createBrowserRouter([
     path: '/',
     element: <App />,
     children: [
-      {
-        path: '/',
-        element: <Home />,
-      },
+    {
+      path: '/',
+      element: <Home />,
+    },
+    {
+      path: '/login',
+      element: <Login />,
+    },
       {
         path: '/login',
         element: <Login />,

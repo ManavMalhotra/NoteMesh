@@ -7,12 +7,14 @@ const noteSchema = new mongoose.Schema({
   },
   date: Date,
   important: Boolean,
+  tags:{
+    type: [String],
+    default : []
+  },
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   }
 })
-
-
 
 module.exports = mongoose.model('Note', noteSchema)

@@ -47,16 +47,18 @@ const Navbar = () => {
             : 
             (
               <>
+
                 <Link
                   to="/new-note" 
                   className="text-white font-medium mx-3 hover:underline">
-                  {user.name}
+                  Create New Note
                 </Link>
+
                 
-                <Link
+                <h1 onClick={handleLogout}
                   className="text-white font-medium mx-3 hover:underline">
                   Logout
-                </Link>
+                </h1>
           
               </>
             )
