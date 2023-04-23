@@ -1,0 +1,17 @@
+<div className="absolute bottom-0 right-0 m-2 space-x-2">
+  <Link to={`edit/${id}`}>
+    <img
+      src={pencilIcon}
+      alt="Edit Note"
+      className="h-3 absolute -top-36 left-10 "
+    />
+  </Link>
+
+  <button
+    key={`delete/${id}`}
+    className="py-1 px-2 bg-red-500 text-white rounded-md"
+    onClick={handleDelete}
+  >
+    Delete
+  </button>
+</div>;

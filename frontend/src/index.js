@@ -8,6 +8,7 @@ import Login from './components/Login';
 import Register from './components/Register';
 import Edit from './components/Edit';
 import NewNote from './components/NewNote';
+import Note from './components/Note';
 import { AuthProvider } from './AuthContext';
 import './index.css';
 
@@ -44,12 +45,16 @@ const router = createBrowserRouter([
         element: <Login />,
       },
       {
-        path: '/signup',
+        path: '/register',
         element: <Register />,
       },
       {
         path: '/new-note',
         element: <NewNote />,
+      },
+      {
+        path: '/view/:id',
+        element: <Note />,
       },
       {
         path: '/edit/:id',

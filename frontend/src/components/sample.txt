@@ -1,0 +1,140 @@
+import NoteCard from "./NoteCard";
+
+import { useEffect, useState, useContext } from "react";
+import API_URL from "../utils/config";
+
+import axios from "axios";
+
+import { AuthContext } from "../AuthContext";
+
+import Login from "./Login";
+
+import Carousel from "react-multi-carousel";
+import "react-multi-carousel/lib/styles.css";
+
+const Home = () => {
+  const [notes, setNotes] = useState([]);
+  const [tags, setTags] = useState([]);
+  const { user, setUser } = useContext(AuthContext);
+
+  useEffect(() => {
+    const fetchNotes = async () => {
+      const res = await axios.get(`${API_URL}/api/notes`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
+      });
+      setNotes(res.data);
+      const allTags = res.data.reduce(
+        (acc, note) => [...acc, ...note.tags],
+        []
+      );
+      setTags([...new Set(allTags)]);
+    };
+
+    fetchNotes();
+  }, [user.token]);
+
+  const handleTagClick = (tag) => {
+    const filteredNotes = notes.filter((note) => note.tags.includes(tag));
+    setNotes(filteredNotes);
+  };
+
+  return (
+    <>
+
+      /* <div className="flex flex-wrap justify-center mb-4">
+        {tags.map((tag) => (
+          <button
+            key={tag}
+            className="bg-gray-200 hover:bg-gray-300 px-2 py-1 rounded-full text-sm font-medium text-gray-700 mr-2 mb-2"
+            onClick={() => handleTagClick(tag)}
+          >
+            {tag}
+          </button>
+        ))}
+      </div> */}
+      {/* <Carousel
+  additionalTransfrom={0}
+  arrows
+  autoPlaySpeed={3000}
+  centerMode={false}
+  className=""
+  containerClass="container"
+  // customLeftArrow={<CustomLeftArrow />}
+  // customRightArrow={<CustomRightArrow />}
+  dotListClass=""
+  draggable
+  focusOnSelect={false}
+  infinite
+  itemClass=""
+  keyBoardControl
+  minimumTouchDrag={80}
+  pauseOnHover
+  renderArrowsWhenDisabled={false}
+  renderButtonGroupOutside={false}
+  renderDotsOutside={false}
+  responsive={{
+    desktop: {
+      breakpoint: {
+        max: 3000,
+        min: 1024
+      },
+      items: 3,
+      partialVisibilityGutter: 40
+    },
+    mobile: {
+      breakpoint: {
+        max: 464,
+        min: 0
+      },
+      items: 1,
+      partialVisibilityGutter: 30
+    },
+    tablet: {
+      breakpoint: {
+        max: 1024,
+        min: 464
+      },
+      items: 2,
+      partialVisibilityGutter: 30
+    }
+  }}
+  rewind={false}
+  rewindWithAnimation={false}
+  rtl={false}
+  shouldResetAutoplay
+  showDots={false}
+  sliderClass=""
+  slidesToSlide={1}
+  swipeable
+      > */
+        {notes.map((note) => (
+          <div key={note._id}>
+            <NoteCard
+              important={note.important}
+              content={note.content}
+              id={note._id}
+              author={note.user.name}
+              onClick={() => handleTagClick(note.tags)}
+            />
+          </div>
+        ))}
+    //   </Carousel>
+    // </div>
+  </>
+    );
+  
+};
+
+export default Home;
+
+
+//delete button
+<button
+          key={`delete/${id}`} className="py-1 px-2 bg-red-500 text-white rounded-md"
+          onClick={handleDelete}
+        >
+          Delete
+        </button>

@@ -45,32 +45,36 @@ const Login = ()=>{
 
     }
     return(
-        <div className="">
-            <h1 className="font-bold text-3xl font-sans bg-white rounded px-8 pt-6 pb-8 mb-4">Register</h1>
+        <div className="flex h-screen items-center ">
+            <div className="flex items-center flex-col fw-full max-w-xs m-auto p-5 border-2 rounded " >
+            <h1 className="text-2xl">Register</h1>
             
-            <div className="px-3 py-3">
-                <label className="block text-gray-700 font-bold mb-2">
-                    Name:
+            <div className="w-full px-3 py-3 ">
+                <label className="block">
+                    Name
                 </label>
-                <input onChange={(e)=>setName(e.target.value)} type="text" className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+                <input onChange={(e)=>setName(e.target.value)} type="text" placeholder="Enter Name" className="border-2 px-2" />
             </div>
 
-            <div className="px-3 py-3">
-                <label className="block text-gray-700 font-bold mb-2">
-                    User Name: 
+            <div className="w-full px-3 py-3 ">
+                <label className="block">
+                    User Name
                 </label>
-                <input onChange={(e)=>setUsername(e.target.value)} type="text" className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+                <input onChange={(e)=>setUsername(e.target.value)} type="text" placeholder="Enter Username" className="border-2 px-2" />
             </div>
 
-            <div className="px-3 py-3">
-                <label className="block text-gray-700 font-bold mb-2">
-                    Password: 
+            <div className="w-full px-3 py-3">
+                <label className="block">
+                    Password
                 </label>
-                <input onChange={(e)=>setPassword(e.target.value)} type="password" className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+                <input onChange={(e)=>setPassword(e.target.value)} type="password" 
+                placeholder="Enter Password" className="border-2 px-2 py-1" />
             </div>
+            <div class="w-full px-3 py-3">
+                <input class="w-full py-2 px-4 rounded border-2 cursor-pointer" type="submit" value="Register" onClick={submitHandler} />
+            </div>       
 
-
-            <button onClick={submitHandler} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"> Sign In</button>
+            </div>
         </div>
     )
 }

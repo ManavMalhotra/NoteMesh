@@ -70,10 +70,11 @@ const NewNote = () => {
   };
   return (
 
-        <div className="container mx-F my-4 max-w-full mx-auto">
+        <div className="container mx-F max-w-full mx-auto p-8 h-40 mt-4 ">
           <div className="flex flex-wrap justify-between">
-            <div className="w-full lg:w-3/4 mb-4 lg:mr-4">
+            <div className="w-full lg:w-3/4 mb-4 mx-auto my-auto ">
               <ReactQuill
+                style={{ height: "10rem" }}
                 value={content}
                 onChange={handleContentChange}
                 placeholder="Take a note..."
@@ -89,8 +90,14 @@ const NewNote = () => {
                   ],
                 }}
               />
+              <button
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-16"
+        onClick={handleSubmit}
+      >
+        Submit
+      </button>
             </div>
-        <div className="w-full lg:w-1/4">
+        {/* <div className="w-full lg:w-1/4">
           <div className="flex flex-wrap items-center mb-2">
             {tags.map((tag, index) => (
               <div key={index} className="px-2 py-1 bg-gray-300 rounded-full mr-2 mb-2">
@@ -102,14 +109,9 @@ const NewNote = () => {
             ))}
           </div>
           <input type="text" className="w-full border border-gray-400 rounded py-2 px-3" placeholder="Add tags..." onKeyUp={handleTagChange} />
-        </div>
+        </div> */}
       </div>
-      <button
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
-        onClick={handleSubmit}
-      >
-        Submit
-      </button>
+      
     </div>
 
 
