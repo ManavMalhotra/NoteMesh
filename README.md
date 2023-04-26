@@ -22,4 +22,6 @@ Note Mesh is still under development and we are working hard to make it better. 
 - Feedback functionality to collect user opinions and suggestions for improvement
 - Deploying on a cloud platform such as Digital Ocean or AWS for better scalability, availability, and performance.
 
-We hope you enjoy using Note Mesh and find it useful for your note-taking needs. If you have any questions, comments, or feedback, please feel free to contact us at notemesh@gmail.com. Thank you for your support!
+We hope you enjoy using Note Mesh and find it useful for your note-taking needs. 
+
+Thank you for your support!
