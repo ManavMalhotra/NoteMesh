@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
-import Navbar from './components/Navbar';
+import NavBar from './components/NavBar';
 import Footer from './components/Footer';
 import Home from './components/Home';
 import Login from './components/Login';
@@ -18,7 +18,7 @@ function App() {
     <React.StrictMode>
     <AuthProvider>
       <div className="App">
-        <Navbar />
+        <NavBar />
         <Outlet />
         <Footer />
       </div>
@@ -40,10 +40,7 @@ const router = createBrowserRouter([
       path: '/login',
       element: <Login />,
     },
-      {
-        path: '/login',
-        element: <Login />,
-      },
+
       {
         path: '/register',
         element: <Register />,

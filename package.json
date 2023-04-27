@@ -10,5 +10,9 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "flowbite": "^1.6.5",
+    "flowbite-react": "^0.4.4"
+  }
 }
