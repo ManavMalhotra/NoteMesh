@@ -43,7 +43,7 @@ const Home = () => {
   };
   console.log(notes);
   return (
-    <div className="flex flex-wrap justify-content">
+    <div className="container flex flex-wrap justify-around">
 
     {Array.from(notes).map(info => (
         <NoteCard

@@ -53,21 +53,15 @@ const mySafeHTML = DOMPurify.sanitize(content);
 
 
   return (
-    <div className=" flex border-2 m-4 p-4 lg:flex-row w-72 h-52 sm:flex-col sm:w-56 sm:h-40 md:" >
+<div class="card px-8 py-8 mx-5 my-5 border-2 w-64 h-64 rounded-md relative">
+  <div class="card-content">
+    <p dangerouslySetInnerHTML={{ __html: (mySafeHTML.substring(0, 100)) }} ></p>
+  </div>
+  <Link to={`edit/${id}`} >
+    <img src={pencilIcon} class="absolute bottom-4 left-4 h-6" />
+  </Link>  
+</div>
 
-      <div dangerouslySetInnerHTML={{ __html: (mySafeHTML.substring(0, 100)) }} >
-      </div>
-
-      <div>
-      <Link to={`edit/${id}`} 
-      className="
-      inline-block
-      md:relative md:-top-32 md:left-40 
-      sm:relative sm:-top-28 sm:left-44 ">
-            <img src={pencilIcon} alt="Edit Note" className=" max-md:h-4 h-6 w-auto" />
-        </Link>
-      </div>
-    </div>
   )
 };
 

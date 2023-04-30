@@ -1,8 +1,14 @@
 import { useState } from "react"
+
 import { useContext } from "react"
+
 import {AuthContext} from "../AuthContext"
+
 import { useNavigate } from "react-router-dom"
+
 import API_URL from "../utils/config"
+
+console.log(API_URL)
 
 const Login = ()=>{
     
