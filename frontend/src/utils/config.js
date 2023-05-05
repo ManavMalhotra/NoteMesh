@@ -1,3 +1,3 @@
-const API_URL = "https://manavmalhotra-ubiquitous-space-broccoli-9w94qv46jgwcx5q6-7001.preview.app.github.dev";
+const API_URL = process.env.REACT_APP_API_URL
 
 export default API_URL; 

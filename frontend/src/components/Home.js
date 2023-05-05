@@ -11,6 +11,7 @@ import Login from "./Login";
 
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
+import Landing from "./Landing";
 
 const Home = () => {
   const [notes, setNotes] = useState([]);
@@ -42,9 +43,16 @@ const Home = () => {
     setNotes(filteredNotes);
   };
   console.log(notes);
+
+  if (!user.auth) {
+    return (
+      
+        <Landing />
+      
+    );
+  }
   return (
     <div className="container flex flex-wrap justify-around">
-
     {Array.from(notes).map(info => (
         <NoteCard
 
@@ -53,10 +61,7 @@ const Home = () => {
             content={info.content}
             id = {info._id}
         />
-    ))}
-    
-                
-          
+    ))}         
             </div>
     
     );

@@ -17,6 +17,10 @@ export default function NavBar() {
     window.location.reload();
   };
 
+  const test = process.env.REACT_APP_API_URL
+
+  console.log("link: ", test )
+
   if(user.auth){
 
     return (
