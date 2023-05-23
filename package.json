@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\"",
-    "start:frontend": "cd frontend && npm start",
+    "build": "cd frontend && npm run build",
+    "start:frontend": "cd frontend && serve -s build",
     "start:backend": "cd backend && npm start"
   },
   "keywords": [],
@@ -13,6 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "concurrently": "^8.0.1",
-    "flowbite": "^1.6.5"
+    "flowbite": "^1.6.5",
+    "react-bootstrap": "^2.7.4"
   }
 }

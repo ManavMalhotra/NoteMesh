@@ -6,7 +6,7 @@ import API_URL from "../utils/config";
 import DOMPurify from "dompurify";
 
 
-const NoteCard = ({ content, id, author }) => {
+const NoteCard = ({ id, content, title }) => {
   const { user } = useContext(AuthContext);
   const [isHover, setIsHover] = useState(false);
   const gradientColors = isHover
@@ -17,21 +17,21 @@ const NoteCard = ({ content, id, author }) => {
     window.location.href = `/view/${id}`;
   };
 
-  const handleDelete = () => {
-    fetch(`${API_URL}/api/notes/${id}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${jwt}`
-      }
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to fetch note content");
-        }
-        window.location.reload()
-        return response.json();
-      })
-  }
+  // const handleDelete = () => {
+  //   fetch(`${API_URL}/api/notes/${id}`, {
+  //     method: "DELETE",
+  //     headers: {
+  //       Authorization: `Bearer ${jwt}`
+  //     }
+  //   })
+  //     .then((response) => {
+  //       if (!response.ok) {
+  //         throw new Error("Failed to fetch note content");
+  //       }
+  //       window.location.reload()
+  //       return response.json();
+  //     })
+  // }
 
   const onDelete = () => {
     fetch(`${API_URL}/api/notes/${id}`, {
@@ -49,20 +49,25 @@ const NoteCard = ({ content, id, author }) => {
   };
   console.log(content)
 
-const mySafeHTML = DOMPurify.sanitize(content);
+  const renderContent = () => {
+    return { __html: content };
+  };
 
 
   return (
-<div class="card px-8 py-8 mx-5 my-5 border-2 w-64 h-64 rounded-md relative">
-  <div class="card-content">
-    <p dangerouslySetInnerHTML={{ __html: (mySafeHTML.substring(0, 100)) }} ></p>
-  </div>
-  <Link to={`edit/${id}`} >
-    <img src={pencilIcon} class="absolute bottom-4 left-4 h-6" />
-  </Link>  
-</div>
-
-  )
+    <div className="bg-white rounded-lg shadow-md p-4">
+      <h3 className="text-lg font-semibold mb-2">{title}</h3>
+      <div
+        className="text-gray-600 overflow-y-auto max-h-36"
+        dangerouslySetInnerHTML={renderContent()}
+      />
+      <div className="flex justify-end mt-4">
+        <Link to={`edit/${id}`}>
+        <img src={pencilIcon} className="h-6 w-6 text-gray-600 hover:text-blue-500 cursor-pointer" />
+        </Link>
+      </div>
+    </div>
+  );
 };
 
 export default NoteCard;

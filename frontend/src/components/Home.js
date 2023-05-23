@@ -5,7 +5,7 @@ import API_URL from "../utils/config";
 
 import axios from "axios";
 
-import { AuthContext } from "../AuthContext";
+import { useAuth } from "../AuthContext";
 
 import Login from "./Login";
 
@@ -16,7 +16,7 @@ import Landing from "./Landing";
 const Home = () => {
   const [notes, setNotes] = useState([]);
   const [tags, setTags] = useState([]);
-  const { user, setUser } = useContext(AuthContext);
+  const { user, setUser } = useAuth()
 
   useEffect(() => {
     const fetchNotes = async () => {
@@ -52,19 +52,21 @@ const Home = () => {
     );
   }
   return (
-    <div className="container flex flex-wrap justify-around">
-    {Array.from(notes).map(info => (
-        <NoteCard
+    <div className="container mx-auto p-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4">
+        {notes.map(note => (
+          <NoteCard
+            key={note._id}
+            important={note.important}
+            title={note.title}
+            content={note.content}
+            id={note._id}
+          />
+        ))}
+      </div>
+    </div>
 
-            key={info._id}
-            important={info.important}
-            content={info.content}
-            id = {info._id}
-        />
-    ))}         
-            </div>
-    
-    );
+    )
   
 };
 

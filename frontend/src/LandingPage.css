@@ -1,0 +1,24 @@
+.gradient {
+    background: rgb(0, 97, 242);
+    background: linear-gradient(
+      135deg,
+      rgba(0, 97, 242, 1) 0%,
+      rgba(105, 0, 199, 1) 100%
+    );
+  }
+  
+  .page-header {
+    font-size: 1.25rem;
+    color: #fff;
+  }
+  
+.customBtn{
+    background-color: #fff;
+    color: #292929fb;
+    font-size: 1.25rem;
+
+}
+.btn-ui:hover{
+    background-color: #292929fb;
+    color: #fff;
+}

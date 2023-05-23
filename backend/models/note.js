@@ -1,6 +1,10 @@
 const mongoose = require('mongoose')
 
 const noteSchema = new mongoose.Schema({
+  title: {
+    type: String,
+    minlength: 2
+  },
   content: {
     type: String,
     minlength: 5
