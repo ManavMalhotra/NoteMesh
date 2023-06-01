@@ -1,5 +1,11 @@
 name: CI/CD Pipeline
 
+env:
+  REACT_APP_API_URL: http://localhost:7001
+  PORT: 7001
+  MONGODB_URI: "mongodb+srv://admin:admin@cluster0.ovyh48b.mongodb.net/todo?retryWrites=true&w=majority"
+  SECRET: "hello world"
+
 on:
   push:
     branches:
