@@ -5,7 +5,7 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import axios from "axios";
 import API_URL from "../utils/config";
-
+import "./NewNote.css"
 const NewNote = () => {
   const { user } = useContext(AuthContext);
   const [tags, setTags] = useState([]);
@@ -85,10 +85,9 @@ const NewNote = () => {
               onChange={(e)=>setTitle(e.target.value)}
             />
           </div>
-          <div className="mb-4">
-            <div className="mx-auto">
+          <div className="mb-2">
+            <div className="mx-auto" style={{ minHeight: "10rem" }}>
               <ReactQuill
-                style={{ height: "10rem" }}
                 value={content}
                 onChange={handleContentChange}
                 placeholder="Take a note..."
@@ -106,7 +105,7 @@ const NewNote = () => {
               />
             </div>
           </div>
-          <div className="flex justify-center">
+          <div className="my-2 mx-auto ">
             <button
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
               type="submit"
