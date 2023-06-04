@@ -14,7 +14,6 @@ NoteMesh is a web application for taking and organizing notes. It provides a use
 - React: JavaScript library for building user interfaces
 - React Router: Routing library for React applications
 - Tailwind CSS: Utility-first CSS framework
-- React Icons: Icon library for React applications
 
 ## Installation
 
