@@ -1,23 +1,36 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { AuthContext } from "../AuthContext";
+import Quill from "quill";
+import "quill/dist/quill.snow.css";
 
-import API_URL from "../utils/config"
+import API_URL from "../utils/config";
 
 const EditNote = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
   const [content, setContent] = useState("");
-  const [important, setImportant] = useState(false);
-
+  const [quill, setQuill] = useState(null); // Store Quill instance
+  const TOOLBAR_OPTIONS = [
+    [{ header: [1, 2, 3, 4, 5, 6, false] }],
+    [{ font: [] }],
+    [{ list: "ordered" }, { list: "bullet" }],
+    ["bold", "italic", "underline"],
+    [{ color: [] }, { background: [] }],
+    [{ script: "sub" }, { script: "super" }],
+    [{ align: [] }],
+    ["image", "blockquote", "code-block"],
+    ["clean"],
+  ]
+  
   useEffect(() => {
-    
+    // Fetch note content from API and set to Quill editor
     fetch(`${API_URL}/api/notes/${id}`, {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${user.token}`
-      }
+        Authorization: `Bearer ${user.token}`,
+      },
     })
       .then((response) => {
         if (!response.ok) {
@@ -31,72 +44,64 @@ const EditNote = () => {
       .catch((error) => {
         console.error(error);
       });
-  },);
+  }, [id, user.token]);
 
-  const handleSubmit = (event) => {
+  useEffect(() => {
+    // Create and initialize Quill editor
+    if (quill) {
+      quill.setContents(quill.clipboard.convert(content));
+
+      // Listen for text changes in the Quill editor
+      quill.on("text-change", (delta, oldDelta, source) => {
+        if (source === "user") {
+          const updatedContent = quill.root.innerHTML;
+          setContent(updatedContent);
+        }
+      });
+    }
+  }, [quill, content]);
+
+  const handleQuillRef = useCallback((node) => {
+    if (node !== null) {
+      setQuill(new Quill(node, {
+        theme: "snow",
+        modules: { toolbar: TOOLBAR_OPTIONS },
+      }));
+    }
+  }, []);
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // Submit updated note content to the backend
-    fetch(`${API_URL}/api/notes/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${user.token}`
-      },
-      body: JSON.stringify({ content: content })
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to update note content");
-        }
-        return response.json();
-      })
-      .then(() => {
-        // Redirect to home page after successful update
-        navigate("/");
-      })
-      .catch((error) => {
-        console.error(error);
+    try {
+      // Submit updated note content to the backend
+      const response = await fetch(`${API_URL}/api/notes/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
+        body: JSON.stringify({ content: quill.root.innerHTML }),
       });
+
+      if (!response.ok) {
+        throw new Error("Failed to update note content");
+      }
+
+      console.log("Note updated successfully");
+
+      // Redirect to home page after successful update
+      navigate("/");
+    } catch (error) {
+      console.error("Error updating note:", error);
+    }
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 mb-6 w-full">
-      <h2 className="text-lg font-medium mb-3">Add New Note</h2>
+    <div className="container">
       <form onSubmit={handleSubmit}>
-
-        <div className="mb-3">
-          <label htmlFor="content" className="block text-gray-700 font-medium mb-2">
-            Content
-          </label>
-          <textarea
-            id="content"
-            value={content}
-            onChange={e => setContent(e.target.value)}
-            className="border border-gray-300 rounded px-3 py-2 w-full"
-            required
-          ></textarea>
-        </div>
-        <div className="mb-3">
-          <label htmlFor="important" className="inline-flex items-center">
-            <input
-              type="checkbox"
-              id="important"
-              checked={important}
-              onChange={e => setImportant(e.target.checked)}
-              className="form-checkbox h-5 w-5 text-blue-500"
-            />
-            <span className="ml-2 text-gray-700 font-medium">Mark as Important</span>
-          </label>
-        </div>
-        <div className="flex justify-end">
-          <button
-            type="submit"
-            className="bg-blue-500 hover:bg-blue-700 text-white font-medium rounded py-2 px-4"
-          >
-            Save
-          </button>
-        </div>
+        <div ref={handleQuillRef}></div>
+        <button type="submit">Save</button>
       </form>
     </div>
   );

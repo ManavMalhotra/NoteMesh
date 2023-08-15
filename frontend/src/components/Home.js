@@ -1,22 +1,15 @@
 import NoteCard from "./NoteCard";
-
 import { useEffect, useState, useContext } from "react";
 import API_URL from "../utils/config";
-
 import axios from "axios";
-
 import { useAuth } from "../AuthContext";
-
 import Login from "./Login";
-
-import Carousel from "react-multi-carousel";
-import "react-multi-carousel/lib/styles.css";
-import Landing from "./Landing";
+import Landing from "./Landing.js";
 
 const Home = () => {
   const [notes, setNotes] = useState([]);
   const [tags, setTags] = useState([]);
-  const { user, setUser } = useAuth()
+  const { user, setUser } = useAuth();
 
   useEffect(() => {
     const fetchNotes = async () => {
@@ -35,7 +28,6 @@ const Home = () => {
     };
 
     fetchNotes();
-    
   }, []);
 
   const handleTagClick = (tag) => {
@@ -45,16 +37,12 @@ const Home = () => {
   console.log(notes);
 
   if (!user.auth) {
-    return (
-      
-        <Landing />
-      
-    );
+    return <Landing />;
   }
   return (
     <div className="container mx-auto p-8">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4">
-        {notes.map(note => (
+        {notes.map((note) => (
           <NoteCard
             key={note._id}
             important={note.important}
@@ -65,9 +53,7 @@ const Home = () => {
         ))}
       </div>
     </div>
-
-    )
-  
+  );
 };
 
 export default Home;

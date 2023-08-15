@@ -71,9 +71,9 @@ const NewNote = () => {
         setIsLoading(false);
       });
   };
-
+  // container mx-auto p-8 mt-4 mb-4 border rounded 
   return (
-    <div className="container mx-auto p-8 mt-4 mb-4 border rounded border-gray-600">
+    <div className="note">
       <form onSubmit={handleSubmit}>
         <div className="grid grid-cols-1 gap-4">
           <div className="my-3">
