@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, redirect } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../AuthContext";
 
@@ -15,7 +15,8 @@ export default function NavBar() {
       name: "",
       token: "",
     });
-    window.location.reload();
+    // redirect to / 
+    redirect("/");
   };
 
   return (
@@ -35,7 +36,7 @@ export default function NavBar() {
           <div className="navbar_items">
             <Link to="/">My Notes</Link>
             <Link to="/new-note">Create New Note</Link>
-            <Link to="/logout" onClick={handleLogout}>Logout</Link>
+            <Link to="/" onClick={handleLogout}>Logout</Link>
           </div>
         )}
       </div>
