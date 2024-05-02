@@ -1,3 +1,5 @@
+import "@radix-ui/themes/styles.css";
+
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
@@ -11,16 +13,19 @@ import NewNote from "./components/NewNote";
 import Note from "./components/Note";
 import { AuthProvider } from "./AuthContext";
 import "./index.css";
+import VerticalNav from "./components/VerticalNav";
+import { Theme } from "@radix-ui/themes";
 
 function App() {
   return (
     <React.StrictMode>
       <AuthProvider>
-        <div className="App">
-          <NavBar />
-          <Outlet />
-          <Footer />
-        </div>
+        <Theme>
+          <div className=" bg-[#F8F8F9] h-screen">
+            <NavBar className="" />
+            <Outlet className="" />
+          </div>
+        </Theme>
       </AuthProvider>
     </React.StrictMode>
   );
@@ -34,10 +39,6 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <Home />,
-      },
-      {
-        path: "/login",
-        element: <Login />,
       },
       {
         path: "/login",
