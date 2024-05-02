@@ -14,18 +14,15 @@ import Note from "./components/Note";
 import { AuthProvider } from "./AuthContext";
 import "./index.css";
 import VerticalNav from "./components/VerticalNav";
-import { Theme } from "@radix-ui/themes";
 
 function App() {
   return (
     <React.StrictMode>
       <AuthProvider>
-        <Theme>
-          <div className=" bg-[#F8F8F9] h-screen">
-            <NavBar className="" />
-            <Outlet className="" />
-          </div>
-        </Theme>
+        <div className=" bg-[#F8F8F9] h-screen">
+          <NavBar className="" />
+          <Outlet className="" />
+        </div>
       </AuthProvider>
     </React.StrictMode>
   );

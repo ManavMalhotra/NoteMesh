@@ -1,30 +1,28 @@
 import hero from "../assets/hero.png";
 import { Link } from "react-router-dom";
-import "../LandingPage.css";
+import "./LandingPage.css";
 
 const Landing = () => {
   return (
     <div>
       <header className="page-header gradient">
-        <div className="container z-10 pt-6">
+        <div className="container z-10 pt-6 mx-auto">
           <div className="flex flex-row items-center justify-center align-middle">
-            <div className="col-md-5">
-              <div className="mt-4 w-100">
-                <h1 className="mb-4 display-1">Enjoy Note taking</h1>
-                <p>
-                  Put down your thoughts down in one place, share with your
-                  friends and loved ones.
-                </p>
-              </div>
+            <div className="mt-4 w-100">
+              <h1 className="mb-4 text-4xl">Enjoy Note taking</h1>
+              <p>
+                Put down your thoughts down in one place, share with your
+                friends and loved ones.
+              </p>
 
-              <button className="mt-3 btn btn-primary badge customBtn text-dark">
+              <button className="mt-3 btn btn-primary badge text-dark">
                 <Link to="/register" className="text-dark">
                   Try it out
                 </Link>
               </button>
             </div>
 
-            <div className="mt-3 col-md-5 d-flex justify-content-center align-items-center">
+            <div className="w-3/5 mt-3 col-md-5 d-flex justify-content-center align-items-center">
               <img src={hero} alt="Header image" class="img-fluid animated" />
             </div>
           </div>
