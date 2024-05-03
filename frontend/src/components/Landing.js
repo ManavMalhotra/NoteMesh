@@ -7,9 +7,9 @@ const Landing = () => {
     <div>
       <header className="page-header gradient">
         <div className="container z-10 pt-6 mx-auto">
-          <div className="flex flex-row items-center justify-center align-middle">
+          <div className="flex items-center justify-center align-middle md:flex-row ">
             <div className="mt-4 w-100">
-              <h1 className="mb-4 text-4xl">Enjoy Note taking</h1>
+              <h1 className="mb-4 md:text-8xl">Enjoy Note taking</h1>
               <p>
                 Put down your thoughts down in one place, share with your
                 friends and loved ones.
@@ -22,8 +22,8 @@ const Landing = () => {
               </button>
             </div>
 
-            <div className="w-3/5 mt-3 col-md-5 d-flex justify-content-center align-items-center">
-              <img src={hero} alt="Header image" class="img-fluid animated" />
+            <div className="w-2/5 mt-3 col-md-5 d-flex justify-content-center align-items-center">
+              <img src={hero} alt="Header image" class="img-fluid animated " />
             </div>
           </div>
         </div>
