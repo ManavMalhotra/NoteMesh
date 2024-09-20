@@ -1,73 +1,66 @@
+import React from "react";
 import { Link } from "react-router-dom";
-import { useContext, useState } from "react";
-import { AuthContext } from "../AuthContext";
+import { useAuth } from "../AuthContext";
 import pencilIcon from "../assets/pencilIcon.svg";
 import API_URL from "../utils/config";
 import DOMPurify from "dompurify";
 
+const NoteCard = React.memo(({ id, content, title }) => {
+  const { user } = useAuth();
 
-const NoteCard = ({ id, content, title }) => {
-  const { user } = useContext(AuthContext);
-  const [isHover, setIsHover] = useState(false);
-  const gradientColors = isHover
-    ? "bg-gradient-to-tr from-gray-300 to-gray-100"
-    : "bg-gradient-to-tr from-white to-gray-300";
-
-  const handleCardClick = () => {
-    window.location.href = `/view/${id}`;
-  };
-
-  // const handleDelete = () => {
-  //   fetch(`${API_URL}/api/notes/${id}`, {
-  //     method: "DELETE",
-  //     headers: {
-  //       Authorization: `Bearer ${jwt}`
-  //     }
-  //   })
-  //     .then((response) => {
-  //       if (!response.ok) {
-  //         throw new Error("Failed to fetch note content");
-  //       }
-  //       window.location.reload()
-  //       return response.json();
-  //     })
-  // }
-
-  const onDelete = () => {
-    fetch(`${API_URL}/api/notes/${id}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${user.token}`,
-      },
-    }).then((response) => {
+  const handleDelete = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/notes/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      });
       if (!response.ok) {
-        throw new Error("Failed to fetch note content");
+        throw new Error("Failed to delete note");
       }
       window.location.reload();
-      return response.json();
-    });
+    } catch (error) {
+      console.error("Error deleting note:", error);
+    }
   };
-  console.log(content)
 
   const renderContent = () => {
-    return { __html: content };
+    return { __html: DOMPurify.sanitize(content) };
   };
 
-
   return (
-    <div className="bg-white rounded-lg shadow-md p-4">
-      <h3 className="text-lg font-semibold mb-2">{title}</h3>
+    <div className="p-6 transition duration-300 ease-in-out transform bg-white rounded-lg shadow-md hover:scale-105 hover:shadow-lg">
+      <h3 className="mb-3 text-xl font-semibold text-gray-800">{title}</h3>
       <div
-        className="text-gray-600 overflow-y-auto max-h-36"
+        className="mb-4 overflow-y-auto text-gray-600 max-h-36"
         dangerouslySetInnerHTML={renderContent()}
       />
-      <div className="flex justify-end mt-4">
-        <Link to={`edit/${id}`}>
-        <img src={pencilIcon} className="h-6 w-6 text-gray-600 hover:text-blue-500 cursor-pointer" />
+      <div className="flex items-center justify-between pt-4 mt-4 border-t border-gray-200">
+        <Link
+          to={`/view/${id}`}
+          className="text-blue-600 transition duration-300 ease-in-out hover:text-blue-800"
+        >
+          View
         </Link>
+        <div className="flex space-x-2">
+          <Link to={`/edit/${id}`}>
+            <img
+              src={pencilIcon}
+              alt="Edit"
+              className="w-6 h-6 text-gray-600 transition duration-300 ease-in-out cursor-pointer hover:text-blue-500"
+            />
+          </Link>
+          <button
+            onClick={handleDelete}
+            className="text-red-600 transition duration-300 ease-in-out hover:text-red-800"
+          >
+            Delete
+          </button>
+        </div>
       </div>
     </div>
   );
-};
+});
 
 export default NoteCard;
