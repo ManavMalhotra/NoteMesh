@@ -1,16 +1,36 @@
-import { Link, redirect } from "react-router-dom";
-import { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../AuthContext";
-
-import logo from "../assets/logo.png";
-
-import { FaStickyNote, FaPlus, FaSignOutAlt } from "react-icons/fa";
-import "./navbar.css";
+import {
+  FaStickyNote,
+  FaPlus,
+  FaSignOutAlt,
+  FaBars,
+  FaTimes,
+} from "react-icons/fa";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import logo from "../assets/logo.png";
 
-export default function NavBar() {
+const NavBar = () => {
   const { user, setUser } = useContext(AuthContext);
+  const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const isScrolled = window.scrollY > 10;
+      if (isScrolled !== scrolled) {
+        setScrolled(isScrolled);
+      }
+    };
+
+    document.addEventListener("scroll", handleScroll);
+    return () => {
+      document.removeEventListener("scroll", handleScroll);
+    };
+  }, [scrolled]);
 
   const handleLogout = () => {
     toast.success("Logout Successful", {
@@ -24,74 +44,128 @@ export default function NavBar() {
         name: "",
         token: "",
       });
-      redirect("/");
+      navigate("/");
     }, 2000);
   };
 
+  const toggleMenu = () => {
+    setIsOpen(!isOpen);
+  };
+
   return (
-    <nav className="px-8 navbar bg-light">
+    <nav
+      className={`py-8 w-full z-10 transition-all duration-300 ${
+        scrolled ? "bg-white shadow-md" : "bg-transparent"
+      }`}
+    >
       <ToastContainer position="top-center" autoClose={5000} theme="light" />
-
-      <div className="navbar_content">
-        {/* Logo Section */}
-        <div className="navbar_brand">
-          <Link to="/">
-            <img src={logo} alt="Notemesh Logo" className="brand_img" />
+      <div className="container mx-auto">
+        <div className="flex items-center justify-between py-4">
+          <Link to="/" className="flex items-center space-x-2">
+            <img src={logo} alt="Notemesh Logo" className="w-auto h-8" />
+            <span className="text-xl font-bold text-gray-800"></span>
           </Link>
+
+          {/* Desktop Menu */}
+          <div className="items-center hidden space-x-4 md:flex">
+            {!user.auth ? (
+              <>
+                <Link
+                  to="/login"
+                  className="text-gray-600 transition duration-300 hover:text-gray-800"
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/register"
+                  className="px-4 py-2 text-white transition duration-300 bg-indigo-600 rounded-lg hover:bg-indigo-700"
+                >
+                  Sign Up
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/"
+                  className="flex items-center space-x-1 text-gray-600 transition duration-300 hover:text-gray-800"
+                >
+                  <FaStickyNote />
+                  <span>My Notes</span>
+                </Link>
+                <Link
+                  to="/new-note"
+                  className="flex items-center space-x-1 text-gray-600 transition duration-300 hover:text-gray-800"
+                >
+                  <FaPlus />
+                  <span>Create New Note</span>
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center space-x-1 text-gray-600 transition duration-300 hover:text-gray-800"
+                >
+                  <FaSignOutAlt />
+                  <span>Logout</span>
+                </button>
+              </>
+            )}
+          </div>
+
+          {/* Mobile Menu Button */}
+          <div className="md:hidden">
+            <button
+              onClick={toggleMenu}
+              className="text-gray-500 hover:text-gray-600 focus:outline-none focus:text-gray-600"
+            >
+              {isOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
+            </button>
+          </div>
         </div>
 
-        {/* Navigation Links */}
-        <div className="navbar_items">
-          {!user.auth ? (
-            <>
-              <Link to="/login" className="nav_link">
-                Login
-              </Link>
-              <Link to="/register" className="nav_link">
-                Register
-              </Link>
-            </>
-          ) : (
-            <>
-              <Link to="/" className="nav_link">
-                <FaStickyNote /> My Notes
-              </Link>
-              {/* <Link to="/new-note" className="nav_link">
-                <FaPlus /> Create New Note
-              </Link> */}
-              <button className="logout_btn" onClick={handleLogout}>
-                <FaSignOutAlt /> Logout
-              </button>
-            </>
-          )}
-        </div>
-      </div>
-
-      <div class="block hidden menu--right" role="navigation">
-        <div class="menuToggle">
-          <input type="checkbox" />
-          <span></span>
-          <span></span>
-          <span></span>
-          <ul class="menuItem">
-            <li>
-              <a href="#">Home</a>
-            </li>
-            <li>
-              <a href="#">About</a>
-            </li>
-            <li>
-              <a href="#">Info</a>
-            </li>
-            <li>
-              <a href="#">Contact</a>
-            </li>
-            <li>
-              <a href="#">Show me more</a>
-            </li>
-          </ul>
+        {/* Mobile Menu */}
+        <div className={`md:hidden ${isOpen ? "block" : "hidden"}`}>
+          <div className="relative bottom-0 px-2 py-8 space-y-1 bg-white sm:px-3">
+            {!user.auth ? (
+              <div className="flex flex-col gap-4">
+                <Link
+                  to="/login"
+                  className="block px-3 py-2 text-base font-medium text-gray-700 rounded-md hover:text-gray-900 hover:bg-gray-50"
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/register"
+                  className="block px-3 py-2 text-base font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700"
+                >
+                  Sign Up
+                </Link>
+              </div>
+            ) : (
+              <>
+                <Link
+                  to="/"
+                  className="block px-3 py-2 text-base font-medium text-gray-700 rounded-md hover:text-gray-900 hover:bg-gray-50"
+                >
+                  My Notes
+                </Link>
+                <Link
+                  to="/new-note"
+                  className="block px-3 py-2 text-base font-medium text-gray-700 rounded-md hover:text-gray-900 hover:bg-gray-50"
+                >
+                  Create New Note
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="block w-full px-3 py-2 text-base font-medium text-left text-gray-700 rounded-md hover:text-gray-900 hover:bg-gray-50"
+                >
+                  Logout
+                </button>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </nav>
   );
-}
+};
+
+export default NavBar;

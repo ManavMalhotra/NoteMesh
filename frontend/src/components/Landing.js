@@ -1,41 +1,87 @@
-import hero from "../assets/hero.png";
+import React from "react";
 import { Link } from "react-router-dom";
-import "./LandingPage.css";
+import { FiEdit3, FiShare2, FiLock } from "react-icons/fi";
 
 const Landing = () => {
   return (
-    <div>
-      <header className="page-header gradient">
-        <div className="container z-10 pt-6 mx-auto">
-          <div className="flex items-center justify-center align-middle md:flex-row ">
-            <div className="mt-4 w-100">
-              <h1 className="mb-4 md:text-8xl">Enjoy Note taking</h1>
-              <p>
-                Put down your thoughts down in one place, share with your
-                friends and loved ones.
-              </p>
+    <div className="min-h-screen bg-gray-50">
+      <main className="container px-6 py-12 mx-auto">
+        <div className="mb-12 text-center">
+          <h1 className="mb-4 text-4xl font-bold text-gray-900 md:text-6xl">
+            Capture Ideas, Collaborate Seamlessly
+          </h1>
+          <p className="max-w-2xl mx-auto text-xl text-gray-600">
+            Notemesh is your all-in-one solution for note-taking, idea
+            organization, and team collaboration. Simple, secure, and designed
+            for modern thinkers.
+          </p>
+          <Link
+            to="/register"
+            className="inline-block px-8 py-3 mt-8 text-lg font-semibold text-white transition duration-300 bg-indigo-600 rounded-lg hover:bg-indigo-700"
+          >
+            Get Started Free
+          </Link>
+        </div>
 
-              <button className="mt-3 btn btn-primary badge text-dark">
-                <Link to="/register" className="text-dark">
-                  Try it out
-                </Link>
-              </button>
-            </div>
-
-            <div className="w-2/5 mt-3 col-md-5 d-flex justify-content-center align-items-center">
-              <img src={hero} alt="Header image" class="img-fluid animated " />
-            </div>
+        <div className="grid gap-8 mb-12 md:grid-cols-3">
+          <div className="p-6 bg-white rounded-lg shadow-md">
+            <FiEdit3 className="w-12 h-12 mb-4 text-indigo-600" />
+            <h3 className="mb-2 text-xl font-semibold">
+              Effortless Note-Taking
+            </h3>
+            <p className="text-gray-600">
+              Jot down your thoughts quickly and easily with our intuitive
+              interface.
+            </p>
+          </div>
+          <div className="p-6 bg-white rounded-lg shadow-md">
+            <FiShare2 className="w-12 h-12 mb-4 text-indigo-600" />
+            <h3 className="mb-2 text-xl font-semibold">Seamless Sharing</h3>
+            <p className="text-gray-600">
+              Collaborate with your team in real-time, share ideas, and boost
+              productivity.
+            </p>
+          </div>
+          <div className="p-6 bg-white rounded-lg shadow-md">
+            <FiLock className="w-12 h-12 mb-4 text-indigo-600" />
+            <h3 className="mb-2 text-xl font-semibold">Secure and Private</h3>
+            <p className="text-gray-600">
+              Your notes are encrypted and protected. Your privacy is our top
+              priority.
+            </p>
           </div>
         </div>
 
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 250">
-          <path
-            fill=" #2a2825"
-            fill-opacity="1"
-            d="M0,128L48,117.3C96,107,192,85,288,80C384,75,480,85,576,112C672,139,768,181,864,181.3C960,181,1056,139,1152,122.7C1248,107,1344,117,1392,122.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
-          ></path>
-        </svg>
-      </header>
+        {/* <div className="p-8 text-center bg-gray-100 rounded-lg">
+          <h2 className="mb-4 text-3xl font-bold">
+            Join thousands of satisfied users
+          </h2>
+          <p className="mb-6 text-xl text-gray-600">
+            "Notemesh has revolutionized the way our team collaborates. It's
+            simple, powerful, and indispensable."
+          </p>
+          <p className="font-semibold">
+            - Sarah Johnson, Product Manager at TechCorp
+          </p>
+        </div> */}
+      </main>
+
+      <footer className="py-8 text-white bg-gray-800">
+        <div className="container px-6 mx-auto text-center">
+          <p>&copy; 2024 Notemesh. All rights reserved.</p>
+          <div className="mt-4">
+            <a href="#" className="mx-2 text-gray-400 hover:text-white">
+              Privacy Policy
+            </a>
+            <a href="#" className="mx-2 text-gray-400 hover:text-white">
+              Terms of Service
+            </a>
+            <a href="#" className="mx-2 text-gray-400 hover:text-white">
+              Contact Us
+            </a>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };
