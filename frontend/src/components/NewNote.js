@@ -16,12 +16,16 @@ const NewNote = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log("NewNote component mounted");
+
     if (!localStorage.getItem("token")) {
+      console.log("No token found, redirecting to login");
       navigate("/login");
       return;
     }
 
     const handleSharedContent = async (sharedContent) => {
+      console.log("Handling shared content:", sharedContent);
       if (sharedContent) {
         setIsLoading(true);
         try {
@@ -32,22 +36,23 @@ const NewNote = () => {
             }`,
             tags: ["shared"],
           };
+          console.log("Attempting to create new note:", newNote);
 
-          await axios.post(`${API_URL}/api/notes`, newNote, {
+          const response = await axios.post(`${API_URL}/api/notes`, newNote, {
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${user.token}`,
             },
           });
+          console.log("Note created successfully:", response.data);
 
-          // Clear shared content after successful save
           if ("serviceWorker" in navigator) {
             navigator.serviceWorker.ready.then((registration) => {
               registration.active.postMessage({ type: "CLEAR_SHARED_CONTENT" });
             });
           }
 
-          navigate("/"); // Redirect to home page or note list
+          navigate("/");
         } catch (error) {
           console.error("Error creating note:", error);
           // You might want to show an error message to the user here
@@ -57,23 +62,38 @@ const NewNote = () => {
       }
     };
 
-    if ("serviceWorker" in navigator && "SharedWorkerGlobalScope" in window) {
-      navigator.serviceWorker.ready.then((registration) => {
-        registration.active.postMessage({ type: "GET_SHARED_CONTENT" });
-      });
+    const setupServiceWorker = async () => {
+      if ("serviceWorker" in navigator) {
+        try {
+          const registration = await navigator.serviceWorker.ready;
+          console.log("Service Worker is ready");
 
-      const messageHandler = (event) => {
-        if (event.data && event.data.type === "SHARED_CONTENT") {
-          handleSharedContent(event.data.content);
+          registration.active.postMessage({ type: "GET_SHARED_CONTENT" });
+
+          const messageHandler = (event) => {
+            console.log("Message received in NewNote:", event.data);
+            if (event.data && event.data.type === "SHARED_CONTENT") {
+              handleSharedContent(event.data.content);
+            }
+          };
+
+          navigator.serviceWorker.addEventListener("message", messageHandler);
+
+          return () => {
+            navigator.serviceWorker.removeEventListener(
+              "message",
+              messageHandler
+            );
+          };
+        } catch (error) {
+          console.error("Error setting up service worker:", error);
         }
-      };
+      } else {
+        console.log("Service Workers are not supported");
+      }
+    };
 
-      navigator.serviceWorker.addEventListener("message", messageHandler);
-
-      return () => {
-        navigator.serviceWorker.removeEventListener("message", messageHandler);
-      };
-    }
+    setupServiceWorker();
   }, [navigate, user.token]);
 
   const handleContentChange = (value) => {
@@ -124,6 +144,28 @@ const NewNote = () => {
 
   return (
     <div className="max-w-4xl p-6 mx-auto mt-10 bg-white rounded-lg shadow-lg">
+      {/* Add a debug button for testing */}
+      <button
+        onClick={() => {
+          if (navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({
+              type: "SHARED_CONTENT",
+              content: {
+                title: "Debug Shared Title",
+                text: "This is a debug shared content.",
+                url: "https://example.com/debug",
+              },
+            });
+            console.log("Debug share event simulated");
+          } else {
+            console.log("Service Worker controller not available");
+          }
+        }}
+        className="px-4 py-2 mb-4 text-gray-800 bg-gray-200 rounded"
+      >
+        Simulate Share (Debug)
+      </button>
+
       <form onSubmit={handleSubmit}>
         <input
           type="text"
