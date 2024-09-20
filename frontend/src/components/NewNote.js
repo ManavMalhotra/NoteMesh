@@ -13,29 +13,68 @@ const NewNote = () => {
   const [content, setContent] = useState("");
   const [tags, setTags] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [sharedContent, setSharedContent] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     if (!localStorage.getItem("token")) {
       navigate("/login");
+      return;
     }
 
-    // Check for shared content
+    const handleSharedContent = async (sharedContent) => {
+      if (sharedContent) {
+        setIsLoading(true);
+        try {
+          const newNote = {
+            title: sharedContent.title || "Shared Note",
+            content: `${sharedContent.text || ""}\n\n${
+              sharedContent.url || ""
+            }`,
+            tags: ["shared"],
+          };
+
+          await axios.post(`${API_URL}/api/notes`, newNote, {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${user.token}`,
+            },
+          });
+
+          // Clear shared content after successful save
+          if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.ready.then((registration) => {
+              registration.active.postMessage({ type: "CLEAR_SHARED_CONTENT" });
+            });
+          }
+
+          navigate("/"); // Redirect to home page or note list
+        } catch (error) {
+          console.error("Error creating note:", error);
+          // You might want to show an error message to the user here
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    };
+
     if ("serviceWorker" in navigator && "SharedWorkerGlobalScope" in window) {
       navigator.serviceWorker.ready.then((registration) => {
         registration.active.postMessage({ type: "GET_SHARED_CONTENT" });
       });
 
-      navigator.serviceWorker.addEventListener("message", (event) => {
+      const messageHandler = (event) => {
         if (event.data && event.data.type === "SHARED_CONTENT") {
-          setSharedContent(event.data.content);
-          setTitle(event.data.content.title || "");
-          setContent(event.data.content.text || "");
+          handleSharedContent(event.data.content);
         }
-      });
+      };
+
+      navigator.serviceWorker.addEventListener("message", messageHandler);
+
+      return () => {
+        navigator.serviceWorker.removeEventListener("message", messageHandler);
+      };
     }
-  }, [navigate]);
+  }, [navigate, user.token]);
 
   const handleContentChange = (value) => {
     setContent(value);
@@ -67,13 +106,6 @@ const NewNote = () => {
         },
       });
 
-      // Clear shared content after successful save
-      if ("serviceWorker" in navigator) {
-        navigator.serviceWorker.ready.then((registration) => {
-          registration.active.postMessage({ type: "CLEAR_SHARED_CONTENT" });
-        });
-      }
-
       navigate("/");
     } catch (error) {
       console.error("Error creating note:", error);
@@ -81,6 +113,14 @@ const NewNote = () => {
       setIsLoading(false);
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="w-32 h-32 border-t-2 border-b-2 border-blue-500 rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-4xl p-6 mx-auto mt-10 bg-white rounded-lg shadow-lg">
