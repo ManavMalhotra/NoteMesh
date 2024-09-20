@@ -1,66 +1,73 @@
-import React from "react";
 import { Link } from "react-router-dom";
-import { useAuth } from "../AuthContext";
+import { useContext, useState } from "react";
+import { AuthContext } from "../AuthContext";
+import { FaTrashAlt } from "react-icons/fa"; // Import delete icon
 import pencilIcon from "../assets/pencilIcon.svg";
 import API_URL from "../utils/config";
 import DOMPurify from "dompurify";
 
-const NoteCard = React.memo(({ id, content, title }) => {
-  const { user } = useAuth();
+const NoteCard = ({ id, content, title }) => {
+  const { user } = useContext(AuthContext);
+  const [isHover, setIsHover] = useState(false);
+  const gradientColors = isHover
+    ? "bg-gradient-to-tr from-gray-200 via-white to-gray-100"
+    : "bg-gradient-to-tr from-white to-gray-200";
 
-  const handleDelete = async () => {
-    try {
-      const response = await fetch(`${API_URL}/api/notes/${id}`, {
+  const handleCardClick = () => {
+    window.location.href = `/view/${id}`;
+  };
+
+  const onDelete = () => {
+    const confirmed = window.confirm("Are you sure you want to delete this note?");
+    if (confirmed) {
+      fetch(`${API_URL}/api/notes/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${user.token}`,
         },
-      });
-      if (!response.ok) {
-        throw new Error("Failed to delete note");
-      }
-      window.location.reload();
-    } catch (error) {
-      console.error("Error deleting note:", error);
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Failed to delete note");
+          }
+          window.location.reload();
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
     }
   };
 
   const renderContent = () => {
-    return { __html: DOMPurify.sanitize(content) };
+    return { __html: DOMPurify.sanitize(content) }; // Sanitize content for safety
   };
 
   return (
-    <div className="p-6 transition duration-300 ease-in-out transform bg-white rounded-lg shadow-md hover:scale-105 hover:shadow-lg">
+    <div
+      className={`${gradientColors} bg-white rounded-lg shadow-lg p-6 transition duration-300 ease-in-out transform hover:scale-105`}
+      onMouseEnter={() => setIsHover(true)}
+      onMouseLeave={() => setIsHover(false)}
+    >
       <h3 className="mb-3 text-xl font-semibold text-gray-800">{title}</h3>
       <div
-        className="mb-4 overflow-y-auto text-gray-600 max-h-36"
+        className="mb-4 overflow-y-auto text-gray-700 max-h-36"
         dangerouslySetInnerHTML={renderContent()}
       />
-      <div className="flex items-center justify-between pt-4 mt-4 border-t border-gray-200">
-        <Link
-          to={`/view/${id}`}
-          className="text-blue-600 transition duration-300 ease-in-out hover:text-blue-800"
-        >
-          View
+      <div className="flex justify-between mt-4">
+        <Link to={`edit/${id}`}>
+          <img
+            src={pencilIcon}
+            className="w-6 h-6 text-gray-600 cursor-pointer hover:text-blue-500"
+            alt="Edit Note"
+          />
         </Link>
-        <div className="flex space-x-2">
-          <Link to={`/edit/${id}`}>
-            <img
-              src={pencilIcon}
-              alt="Edit"
-              className="w-6 h-6 text-gray-600 transition duration-300 ease-in-out cursor-pointer hover:text-blue-500"
-            />
-          </Link>
-          <button
-            onClick={handleDelete}
-            className="text-red-600 transition duration-300 ease-in-out hover:text-red-800"
-          >
-            Delete
-          </button>
-        </div>
+        <FaTrashAlt
+          className="w-6 h-6 text-gray-600 cursor-pointer hover:text-red-500"
+          onClick={onDelete}
+        />
       </div>
     </div>
   );
-});
+};
 
 export default NoteCard;
