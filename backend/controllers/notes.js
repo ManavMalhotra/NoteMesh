@@ -49,7 +49,7 @@ notesRouter.get("/:id", async (request, response) => {
 });
 
 notesRouter.post("/", async (req, res) => {
-  const { title, content } = req.body;
+  const { title, content, tags } = req.body;
   const token = await getTokenFrom(req);
   const decodeToken = jwt.verify(token, process.env.SECRET);
   if (!token || !decodeToken.id) {
@@ -61,6 +61,7 @@ notesRouter.post("/", async (req, res) => {
   const note = new Note({
     title,
     content,
+    tags,
     date: new Date(),
     user: user._id,
   });
