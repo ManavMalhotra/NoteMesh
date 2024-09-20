@@ -1,11 +1,10 @@
-import { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../AuthContext";
 import { useNavigate } from "react-router-dom";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.bubble.css";
 import axios from "axios";
 import API_URL from "../utils/config";
-import "./NewNote.css";
 import CreatableSelect from "react-select/creatable";
 
 const NewNote = () => {
@@ -14,36 +13,46 @@ const NewNote = () => {
   const [content, setContent] = useState("");
   const [tags, setTags] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [sharedContent, setSharedContent] = useState(null);
   const navigate = useNavigate();
 
-  // Redirect to login if no token is found in localStorage
   useEffect(() => {
     if (!localStorage.getItem("token")) {
       navigate("/login");
     }
+
+    // Check for shared content
+    if ("serviceWorker" in navigator && "SharedWorkerGlobalScope" in window) {
+      navigator.serviceWorker.ready.then((registration) => {
+        registration.active.postMessage({ type: "GET_SHARED_CONTENT" });
+      });
+
+      navigator.serviceWorker.addEventListener("message", (event) => {
+        if (event.data && event.data.type === "SHARED_CONTENT") {
+          setSharedContent(event.data.content);
+          setTitle(event.data.content.title || "");
+          setContent(event.data.content.text || "");
+        }
+      });
+    }
   }, [navigate]);
 
-  // Handle content change from Quill editor
   const handleContentChange = (value) => {
     setContent(value);
   };
 
-  // Handle title input change
   const handleTitleChange = (e) => {
     setTitle(e.target.value);
   };
 
-  // Handle tag changes from CreatableSelect
   const handleTagChange = (newTags) => {
-    setTags(newTags || []); // Update the tags state, default to empty array if none
+    setTags(newTags || []);
   };
 
-  // Handle form submission
   const handleSubmit = async (event) => {
     event.preventDefault();
     setIsLoading(true);
 
-    // Prepare note object with title, content, and tags
     const newNote = {
       title,
       content,
@@ -51,13 +60,20 @@ const NewNote = () => {
     };
 
     try {
-  
       await axios.post(`${API_URL}/api/notes`, newNote, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${user.token}`,
         },
       });
+
+      // Clear shared content after successful save
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.ready.then((registration) => {
+          registration.active.postMessage({ type: "CLEAR_SHARED_CONTENT" });
+        });
+      }
+
       navigate("/");
     } catch (error) {
       console.error("Error creating note:", error);
@@ -69,7 +85,6 @@ const NewNote = () => {
   return (
     <div className="max-w-4xl p-6 mx-auto mt-10 bg-white rounded-lg shadow-lg">
       <form onSubmit={handleSubmit}>
-        {/* Title Input */}
         <input
           type="text"
           className="w-full mb-4 text-4xl font-semibold placeholder-gray-400 border-none outline-none"
@@ -78,12 +93,11 @@ const NewNote = () => {
           onChange={handleTitleChange}
         />
 
-        {/* Tags Input */}
         <CreatableSelect
           isMulti
-          value={tags} // Bind tags state to the select input
+          value={tags}
           onChange={handleTagChange}
-          placeholder="Add tags..." // Placeholder for tag input
+          placeholder="Add tags..."
           className="mb-6"
           styles={{
             control: (provided) => ({
@@ -97,12 +111,11 @@ const NewNote = () => {
           }}
         />
 
-        {/* Content Editor */}
         <ReactQuill
-          theme="bubble" // Using the clean bubble theme
-          value={content} // Bind content state to the editor
-          onChange={handleContentChange} // Update content state on change
-          placeholder="Start writing here..." // Placeholder in editor
+          theme="bubble"
+          value={content}
+          onChange={handleContentChange}
+          placeholder="Start writing here..."
           modules={{
             toolbar: [
               [{ header: [1, 2, 3, false] }],
@@ -115,7 +128,6 @@ const NewNote = () => {
           className="min-h-[300px] mb-6"
         />
 
-        {/* Save Button */}
         <div className="flex justify-end">
           <button
             className={`px-6 py-2 text-white transition duration-300 ease-in-out transform bg-blue-600 rounded-lg ${
@@ -124,7 +136,7 @@ const NewNote = () => {
                 : "hover:bg-blue-700 hover:scale-105"
             } focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}
             type="submit"
-            disabled={isLoading} // Disable button when saving
+            disabled={isLoading}
           >
             {isLoading ? (
               <span className="flex items-center">
