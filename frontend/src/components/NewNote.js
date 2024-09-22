@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.bubble.css";
 import axios from "axios";
@@ -14,6 +14,27 @@ const NewNote = () => {
   const [tags, setTags] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  let [searchParams, setSearchParams] = useSearchParams();
+
+  useEffect(() => {
+    const sharedTitle = searchParams.get("title");
+    const sharedText = searchParams.get("text");
+    const sharedUrl = searchParams.get("url");
+
+    if (sharedTitle || sharedText || sharedUrl) {
+      setTags([{ value: "Shared", label: "Shared" }]);
+      // Update the title if `title` parameter is present
+      if (sharedTitle) setTitle(sharedTitle);
+
+      // Construct the content from `text` and `url` parameters
+      let newContent = "";
+      if (sharedText) newContent += sharedText;
+      if (sharedUrl) newContent += `\n\n ${sharedUrl}`;
+
+      // Update the content state
+      setContent(newContent);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     console.log("NewNote component mounted");
@@ -46,12 +67,7 @@ const NewNote = () => {
           });
           console.log("Note created successfully:", response.data);
 
-          if ("serviceWorker" in navigator) {
-            navigator.serviceWorker.ready.then((registration) => {
-              registration.active.postMessage({ type: "CLEAR_SHARED_CONTENT" });
-            });
-          }
-
+          // Navigate to the home page after saving
           navigate("/");
         } catch (error) {
           console.error("Error creating note:", error);
