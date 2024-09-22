@@ -17,6 +17,13 @@ const NewNote = () => {
   let [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
+
+    if (!localStorage.getItem("token")) {
+      console.log("No token found, redirecting to login");
+      navigate("/login");
+      return;
+    }
+
     const sharedTitle = searchParams.get("title");
     const sharedText = searchParams.get("text");
     const sharedUrl = searchParams.get("url");
@@ -35,83 +42,83 @@ const NewNote = () => {
       // Update the content state
       setContent(newContent);
     }
-  }, [searchParams]);
+  }, [searchParams, user.token]);
 
-  useEffect(() => {
-    console.log("NewNote component mounted");
+  // useEffect(() => {
+  //   console.log("NewNote component mounted");
 
-    if (!localStorage.getItem("token")) {
-      console.log("No token found, redirecting to login");
-      navigate("/login");
-      return;
-    }
+  //   if (!localStorage.getItem("token")) {
+  //     console.log("No token found, redirecting to login");
+  //     navigate("/login");
+  //     return;
+  //   }
 
-    const handleSharedContent = async (sharedContent) => {
-      console.log("Handling shared content:", sharedContent);
-      if (sharedContent) {
-        setIsLoading(true);
-        try {
-          const newNote = {
-            title: sharedContent.title || "Shared Note",
-            content: `${sharedContent.text || ""}\n\n${
-              sharedContent.url || ""
-            }`,
-            tags: ["shared"],
-          };
-          console.log("Attempting to create new note:", newNote);
+  //   const handleSharedContent = async (sharedContent) => {
+  //     console.log("Handling shared content:", sharedContent);
+  //     if (sharedContent) {
+  //       setIsLoading(true);
+  //       try {
+  //         const newNote = {
+  //           title: sharedContent.title || "Shared Note",
+  //           content: `${sharedContent.text || ""}\n\n${
+  //             sharedContent.url || ""
+  //           }`,
+  //           tags: ["shared"],
+  //         };
+  //         console.log("Attempting to create new note:", newNote);
 
-          const response = await axios.post(`${API_URL}/api/notes`, newNote, {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${user.token}`,
-            },
-          });
-          console.log("Note created successfully:", response.data);
+  //         const response = await axios.post(`${API_URL}/api/notes`, newNote, {
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //             Authorization: `Bearer ${user.token}`,
+  //           },
+  //         });
+  //         console.log("Note created successfully:", response.data);
 
-          // Navigate to the home page after saving
-          navigate("/");
-        } catch (error) {
-          console.error("Error creating note:", error);
-          // You might want to show an error message to the user here
-        } finally {
-          setIsLoading(false);
-        }
-      }
-    };
+  //         // Navigate to the home page after saving
+  //         navigate("/");
+  //       } catch (error) {
+  //         console.error("Error creating note:", error);
+  //         // You might want to show an error message to the user here
+  //       } finally {
+  //         setIsLoading(false);
+  //       }
+  //     }
+  //   };
 
-    const setupServiceWorker = async () => {
-      if ("serviceWorker" in navigator) {
-        try {
-          const registration = await navigator.serviceWorker.ready;
-          console.log("Service Worker is ready");
+  //   const setupServiceWorker = async () => {
+  //     if ("serviceWorker" in navigator) {
+  //       try {
+  //         const registration = await navigator.serviceWorker.ready;
+  //         console.log("Service Worker is ready");
 
-          registration.active.postMessage({ type: "GET_SHARED_CONTENT" });
+  //         registration.active.postMessage({ type: "GET_SHARED_CONTENT" });
 
-          const messageHandler = (event) => {
-            console.log("Message received in NewNote:", event.data);
-            if (event.data && event.data.type === "SHARED_CONTENT") {
-              handleSharedContent(event.data.content);
-            }
-          };
+  //         const messageHandler = (event) => {
+  //           console.log("Message received in NewNote:", event.data);
+  //           if (event.data && event.data.type === "SHARED_CONTENT") {
+  //             handleSharedContent(event.data.content);
+  //           }
+  //         };
 
-          navigator.serviceWorker.addEventListener("message", messageHandler);
+  //         navigator.serviceWorker.addEventListener("message", messageHandler);
 
-          return () => {
-            navigator.serviceWorker.removeEventListener(
-              "message",
-              messageHandler
-            );
-          };
-        } catch (error) {
-          console.error("Error setting up service worker:", error);
-        }
-      } else {
-        console.log("Service Workers are not supported");
-      }
-    };
+  //         return () => {
+  //           navigator.serviceWorker.removeEventListener(
+  //             "message",
+  //             messageHandler
+  //           );
+  //         };
+  //       } catch (error) {
+  //         console.error("Error setting up service worker:", error);
+  //       }
+  //     } else {
+  //       console.log("Service Workers are not supported");
+  //     }
+  //   };
 
-    setupServiceWorker();
-  }, [navigate, user.token]);
+  //   setupServiceWorker();
+  // }, [navigate, user.token]);
 
   const handleContentChange = (value) => {
     setContent(value);
