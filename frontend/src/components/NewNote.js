@@ -1,8 +1,8 @@
 import React, { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../AuthContext";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.bubble.css";
+import ReactQuill from "react-quill-new";
+import "react-quill-new/dist/quill.bubble.css";
 import axios from "axios";
 import API_URL from "../utils/config";
 import CreatableSelect from "react-select/creatable";

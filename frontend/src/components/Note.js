@@ -3,8 +3,8 @@ import API_URL from "../utils/config";
 import { useNavigate, useParams } from "react-router-dom";
 import { AuthContext } from "../AuthContext";
 import DOMPurify from "dompurify";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+import ReactQuill from "react-quill-new";
+import "react-quill-new/dist/quill.snow.css";
 
 const Note = () => {
     const [content, setContent] = useState("");

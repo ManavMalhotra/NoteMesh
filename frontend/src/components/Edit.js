@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { AuthContext } from "../AuthContext";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.bubble.css";
+import ReactQuill from "react-quill-new";
+import "react-quill-new/dist/quill.bubble.css";
 import axios from "axios";
 import API_URL from "../utils/config";
 import "./NewNote.css";
