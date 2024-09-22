@@ -24,6 +24,7 @@ const NewNote = () => {
     if (sharedTitle || sharedText || sharedUrl) {
       setTags([{ value: "Shared", label: "Shared" }]);
       // Update the title if `title` parameter is present
+      setTitle("Untitled")
       if (sharedTitle) setTitle(sharedTitle);
 
       // Construct the content from `text` and `url` parameters
