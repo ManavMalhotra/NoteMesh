@@ -38,3 +38,8 @@ body {
   /* background: grey; */
   margin-bottom: 30px;
 }
+
+.word-wrap {
+  word-wrap: break-word; /* Allows breaking long words to fit within the bounds */
+  overflow-wrap: anywhere; /* Helps to wrap text at any character to avoid overflow */
+}
