@@ -13,13 +13,14 @@ const swaggerDocument = require("./swagger.json");
 console.log("connecting to", config.MONGODB_URI);
 
 mongoose
-  .connect(config.MONGODB_URI)
-  .then(() => {
-    console.log("connected to MongoDB");
+  .connect(config.MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
   })
-  .catch((error) => {
-    console.error("error connection to MongoDB:", error.message);
-  });
+  .then(() => logger.info("Connected to MongoDB"))
+  .catch((error) =>
+    logger.error("Error connecting to MongoDB:", error.message)
+  );
 
 app.use(cors());
 app.options("*", cors());
@@ -27,16 +28,10 @@ app.options("*", cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get("/", (req, res) => {
-  return {
-    msg: "Hello World",
-  };
-});
-
+app.get("/", (req, res) => res.status(200).json({ msg: "Hello World" }));
 app.use("/api/notes", notesRouter);
 app.use("/api/user", userRouter);
 app.use("/api/login", loginRouter);
-
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // app.use((req, res, next) => {
@@ -56,4 +51,8 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.listen(config.PORT, () => {
   `Listening on ${config.PORT}`;
+});
+
+app.use((err, req, res, next) => {
+  res.status(500).json({ error: "Something went wrong" });
 });
