@@ -5,6 +5,7 @@ import API_URL from "../utils/config";
 import { useAuth } from "../AuthContext";
 import NoteCard from "./NoteCard";
 import Landing from "./Landing";
+import Masonry from "react-masonry-css";
 
 const MemoizedNoteCard = React.memo(NoteCard);
 
@@ -49,9 +50,12 @@ const Home = () => {
     return [...new Set(allTags)];
   }, [notes]);
 
-  const handleTagClick = useCallback((tag) => {
-    setActiveTag(tag === activeTag ? null : tag);
-  }, [activeTag]);
+  const handleTagClick = useCallback(
+    (tag) => {
+      setActiveTag(tag === activeTag ? null : tag);
+    },
+    [activeTag]
+  );
 
   const filteredNotes = React.useMemo(() => {
     return activeTag
@@ -60,13 +64,30 @@ const Home = () => {
   }, [notes, activeTag]);
 
   if (!user.auth) return <Landing />;
-  if (isLoading) return <div className="flex items-center justify-center h-screen">Loading...</div>;
-  if (error) return <div className="flex items-center justify-center h-screen">Error: {error.message}</div>;
+  if (isLoading)
+    return (
+      <div className="flex items-center justify-center h-screen">
+        Loading...
+      </div>
+    );
+  if (error)
+    return (
+      <div className="flex items-center justify-center h-screen">
+        Error: {error.message}
+      </div>
+    );
+
+  const breakpointColumnsObj = {
+    default: 4,
+    1100: 3,
+    700: 2,
+    500: 1,
+  };
 
   return (
-    <div className="container p-8 mx-auto">
+    <div className="container p-8 mx-auto bg-black">
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold text-gray-800">My Notes</h1>
+        <h1 className="text-3xl font-bold text-white">My Notes</h1>
         <button
           className="px-4 py-2 text-white transition-colors bg-blue-500 rounded-full hover:bg-blue-600"
           onClick={() => navigate("/new-note")}
@@ -81,11 +102,11 @@ const Home = () => {
             onClick={() => setActiveTag(null)}
             className={`px-3 py-1 m-1 text-sm rounded-full transition-colors ${
               activeTag === null
-                ? "bg-gray-800 text-white"
-                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                ? "bg-white text-black"
+                : " bg-transparent border border-gray-400 text-gray-400"
             }`}
           >
-            All
+            All ({notes.length})
           </button>
           {tags.map((tag) => (
             <button
@@ -93,8 +114,8 @@ const Home = () => {
               onClick={() => handleTagClick(tag)}
               className={`px-3 py-1 m-1 text-sm rounded-full transition-colors ${
                 activeTag === tag
-                  ? "bg-gray-800 text-white"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  ? "bg-white text-black"
+                  : " bg-transparent border border-gray-400 text-gray-400"
               }`}
             >
               {tag}
@@ -105,10 +126,16 @@ const Home = () => {
 
       {filteredNotes.length === 0 ? (
         <div className="flex items-center justify-center h-64">
-          <p className="text-xl text-gray-500">No notes found. Create your first note!</p>
+          <p className="text-xl text-gray-500">
+            No notes found. Create your first note!
+          </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <Masonry
+          breakpointCols={breakpointColumnsObj}
+          className="my-masonry-grid"
+          columnClassName="my-masonry-grid_column"
+        >
           {filteredNotes.map((note) => (
             <MemoizedNoteCard
               key={note._id}
@@ -118,7 +145,7 @@ const Home = () => {
               id={note._id}
             />
           ))}
-        </div>
+        </Masonry>
       )}
     </div>
   );

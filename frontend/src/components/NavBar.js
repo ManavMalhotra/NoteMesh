@@ -62,8 +62,18 @@ const NavBar = () => {
       <div className="container mx-auto">
         <div className="flex items-center justify-between py-4">
           <Link to="/" className="flex items-center space-x-2">
-            <img src={logo} alt="Notemesh Logo" className="w-auto h-8" />
-            <span className="text-xl font-bold text-gray-800"></span>
+            {!user.auth ? (
+              <>
+                <img src={logo} alt="Notemesh Logo" className="w-auto h-8" />
+                {/* <span>Please log in</span> */}
+              </>
+            ) : (
+              <>
+                <span className="text-xl font-bold text-gray-800">
+                  Hi, {user.name}
+                </span>
+              </>
+            )}
           </Link>
 
           {/* Desktop Menu */}

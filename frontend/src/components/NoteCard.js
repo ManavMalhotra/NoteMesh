@@ -18,7 +18,9 @@ const NoteCard = ({ id, content, title }) => {
   };
 
   const onDelete = () => {
-    const confirmed = window.confirm("Are you sure you want to delete this note?");
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this note?"
+    );
     if (confirmed) {
       fetch(`${API_URL}/api/notes/${id}`, {
         method: "DELETE",
@@ -44,7 +46,7 @@ const NoteCard = ({ id, content, title }) => {
 
   return (
     <div
-      className={`${gradientColors} bg-white rounded-lg shadow-lg p-6 transition duration-300 ease-in-out transform hover:scale-105`}
+      className={`${gradientColors} bg-white rounded-2xl shadow-lg p-6 transition duration-300 ease-in-out transform hover:scale-105`}
       onMouseEnter={() => setIsHover(true)}
       onMouseLeave={() => setIsHover(false)}
     >
