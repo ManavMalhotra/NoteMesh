@@ -29,7 +29,9 @@ notesRouter.get("/", async (req, res) => {
       name: 1,
     });
 
-    const userNotes = notes.filter((note) => note.user._id.toString() === decoded.id);
+    const userNotes = notes.filter(
+      (note) => note.user._id.toString() === decoded.id
+    );
     res.status(200).json(userNotes);
   } catch (error) {
     res.status(500).json({ error: "something went wrong" });
@@ -102,11 +104,11 @@ notesRouter.delete("/:id", async (req, res) => {
 // PUT update a note by ID
 notesRouter.put("/:id", async (req, res) => {
   try {
-    const { content, important } = req.body;
+    const { title, content, tags, important } = req.body;
 
     const updatedNote = await Note.findByIdAndUpdate(
       req.params.id,
-      { content, important },
+      { title, content, tags, important },
       { new: true }
     );
 
