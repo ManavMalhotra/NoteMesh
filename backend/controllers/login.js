@@ -23,7 +23,7 @@ loginRouter.post('/', async (req, res) => {
       id: user._id
     };
 
-    const token = jwt.sign(userToken, process.env.SECRET, { expiresIn: '1h' }); // Token valid for 1 hour
+    const token = jwt.sign(userToken, process.env.SECRET, { expiresIn: '7d' }); // Token valid for 1 hour
 
     // Send token and user data
     res.status(200).json({
