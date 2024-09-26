@@ -17,9 +17,9 @@ mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
-  .then(() => logger.info("Connected to MongoDB"))
+  .then(() => console.info("Connected to MongoDB"))
   .catch((error) =>
-    logger.error("Error connecting to MongoDB:", error.message)
+    console.error("Error connecting to MongoDB:", error.message)
   );
 
 app.use(cors());
