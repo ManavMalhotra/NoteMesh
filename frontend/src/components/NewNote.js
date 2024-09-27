@@ -168,28 +168,6 @@ const NewNote = () => {
 
   return (
     <div className="max-w-4xl p-6 mx-auto mt-10 bg-white rounded-lg shadow-lg">
-      {/* Add a debug button for testing */}
-      <button
-        onClick={() => {
-          if (navigator.serviceWorker.controller) {
-            navigator.serviceWorker.controller.postMessage({
-              type: "SHARED_CONTENT",
-              content: {
-                title: "Debug Shared Title",
-                text: "This is a debug shared content.",
-                url: "https://example.com/debug",
-              },
-            });
-            console.log("Debug share event simulated");
-          } else {
-            console.log("Service Worker controller not available");
-          }
-        }}
-        className="px-4 py-2 mb-4 text-gray-800 bg-gray-200 rounded"
-      >
-        Simulate Share (Debug)
-      </button>
-
       <form onSubmit={handleSubmit}>
         <input
           type="text"
