@@ -32,6 +32,10 @@ function App() {
   useEffect(() => {
     const token = localStorage.getItem("token");
 
+    if (token == undefined) {
+      return;
+    }
+
     // If no token or the token is expired, redirect to the login page
     if (isTokenExpired(token)) {
       alert("Session expired. Please log in again.");
