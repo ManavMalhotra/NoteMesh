@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useContext, useCallback } from "react";
+import React, {
+  useState,
+  useEffect,
+  useContext,
+  useCallback,
+  useRef,
+} from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { AuthContext } from "../AuthContext";
 import ReactQuill from "react-quill-new";
@@ -15,7 +21,11 @@ const EditNote = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [tags, setTags] = useState([]);
+  const [inputValue, setInputValue] = useState("");
+  const [isTagLoading, setIsTagLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const debounceTimer = useRef(null);
 
   useEffect(() => {
     if (!localStorage.getItem("token")) {
@@ -41,9 +51,59 @@ const EditNote = () => {
     };
     fetchNote();
   }, [id, user.token]);
+  const fetchTagSuggestions = useCallback(
+    async (noteContent) => {
+      if (!noteContent) return;
+
+      setIsTagLoading(true);
+      try {
+        const response = await axios.post(
+          `${API_URL}/api/notes/tag-suggestion`,
+          { content: noteContent },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${user.token}`,
+            },
+          }
+        );
+        const suggestedTags = response.data?.msg.tags || [];
+        setTags(suggestedTags.map((tag) => ({ value: tag, label: tag })));
+      } catch (error) {
+        console.error("Error fetching tag suggestions:", error);
+      } finally {
+        setIsTagLoading(false);
+      }
+    },
+    [user.token]
+  );
+  
+  const handleInputChange = (input) => {
+    setInputValue(input);
+  };
 
   const handleContentChange = (value) => {
     setContent(value);
+
+    // Clear the previous timer
+    if (debounceTimer.current) {
+      clearTimeout(debounceTimer.current);
+    }
+
+    // Set a new debounce timer
+    debounceTimer.current = setTimeout(() => {
+      fetchTagSuggestions(value);
+    }, 2000);
+  };
+
+  const handleKeyDown = (event) => {
+    if (!inputValue) return;
+    if (event.key === " ") {
+      event.preventDefault();
+      const newTag = { value: inputValue.trim(), label: inputValue.trim() };
+      setTags((prevTags) => [...prevTags, newTag]);
+      setInputValue(""); // Clear the input after creating the tag
+    }
   };
 
   const handleTitleChange = (e) => {
@@ -123,6 +183,9 @@ const EditNote = () => {
         <CreatableSelect
           isMulti
           value={tags}
+          inputValue={inputValue}
+          onInputChange={handleInputChange}
+          onKeyDown={handleKeyDown}
           onChange={handleTagChange}
           placeholder="Add tags..."
           className="mb-6"

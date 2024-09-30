@@ -85,7 +85,7 @@ const Home = () => {
   };
 
   return (
-    <div className="container p-8 mx-auto bg-black">
+    <div className="container p-8 mx-auto bg-black rounded-lg">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-3xl font-bold text-white">My Notes</h1>
         <button

@@ -1,4 +1,10 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, {
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+} from "react";
 import { AuthContext } from "../AuthContext";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import ReactQuill from "react-quill-new";
@@ -12,14 +18,17 @@ const NewNote = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [tags, setTags] = useState([]);
+  const [inputValue, setInputValue] = useState("");
+  const [isTagLoading, setIsTagLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  let [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
+
+  // Debounce timer ref
+  const debounceTimer = useRef(null);
 
   useEffect(() => {
-
     if (!localStorage.getItem("token")) {
-      console.log("No token found, redirecting to login");
       navigate("/login");
       return;
     }
@@ -30,99 +39,13 @@ const NewNote = () => {
 
     if (sharedTitle || sharedText || sharedUrl) {
       setTags([{ value: "Shared", label: "Shared" }]);
-      // Update the title if `title` parameter is present
-      setTitle("Untitled")
-      if (sharedTitle) setTitle(sharedTitle);
+      setTitle(sharedTitle || "Untitled");
 
-      // Construct the content from `text` and `url` parameters
-      let newContent = "";
-      if (sharedText) newContent += sharedText;
-      if (sharedUrl) newContent += `\n\n ${sharedUrl}`;
-
-      // Update the content state
+      let newContent = sharedText || "";
+      if (sharedUrl) newContent += `\\n\\n ${sharedUrl}`;
       setContent(newContent);
     }
-  }, [searchParams, user.token]);
-
-  // useEffect(() => {
-  //   console.log("NewNote component mounted");
-
-  //   if (!localStorage.getItem("token")) {
-  //     console.log("No token found, redirecting to login");
-  //     navigate("/login");
-  //     return;
-  //   }
-
-  //   const handleSharedContent = async (sharedContent) => {
-  //     console.log("Handling shared content:", sharedContent);
-  //     if (sharedContent) {
-  //       setIsLoading(true);
-  //       try {
-  //         const newNote = {
-  //           title: sharedContent.title || "Shared Note",
-  //           content: `${sharedContent.text || ""}\n\n${
-  //             sharedContent.url || ""
-  //           }`,
-  //           tags: ["shared"],
-  //         };
-  //         console.log("Attempting to create new note:", newNote);
-
-  //         const response = await axios.post(`${API_URL}/api/notes`, newNote, {
-  //           headers: {
-  //             "Content-Type": "application/json",
-  //             Authorization: `Bearer ${user.token}`,
-  //           },
-  //         });
-  //         console.log("Note created successfully:", response.data);
-
-  //         // Navigate to the home page after saving
-  //         navigate("/");
-  //       } catch (error) {
-  //         console.error("Error creating note:", error);
-  //         // You might want to show an error message to the user here
-  //       } finally {
-  //         setIsLoading(false);
-  //       }
-  //     }
-  //   };
-
-  //   const setupServiceWorker = async () => {
-  //     if ("serviceWorker" in navigator) {
-  //       try {
-  //         const registration = await navigator.serviceWorker.ready;
-  //         console.log("Service Worker is ready");
-
-  //         registration.active.postMessage({ type: "GET_SHARED_CONTENT" });
-
-  //         const messageHandler = (event) => {
-  //           console.log("Message received in NewNote:", event.data);
-  //           if (event.data && event.data.type === "SHARED_CONTENT") {
-  //             handleSharedContent(event.data.content);
-  //           }
-  //         };
-
-  //         navigator.serviceWorker.addEventListener("message", messageHandler);
-
-  //         return () => {
-  //           navigator.serviceWorker.removeEventListener(
-  //             "message",
-  //             messageHandler
-  //           );
-  //         };
-  //       } catch (error) {
-  //         console.error("Error setting up service worker:", error);
-  //       }
-  //     } else {
-  //       console.log("Service Workers are not supported");
-  //     }
-  //   };
-
-  //   setupServiceWorker();
-  // }, [navigate, user.token]);
-
-  const handleContentChange = (value) => {
-    setContent(value);
-  };
+  }, [searchParams, navigate, user.token]);
 
   const handleTitleChange = (e) => {
     setTitle(e.target.value);
@@ -130,6 +53,63 @@ const NewNote = () => {
 
   const handleTagChange = (newTags) => {
     setTags(newTags || []);
+  };
+
+  const handleInputChange = (input) => {
+    setInputValue(input);
+  };
+
+  const handleKeyDown = (event) => {
+    if (!inputValue) return;
+    if (event.key === " ") {
+      event.preventDefault();
+      const newTag = { value: inputValue.trim(), label: inputValue.trim() };
+      setTags((prevTags) => [...prevTags, newTag]);
+      setInputValue(""); // Clear the input after creating the tag
+    }
+  };
+
+  // Fetch tag suggestions with debounce
+  const fetchTagSuggestions = useCallback(
+    async (noteContent) => {
+      if (!noteContent) return;
+
+      setIsTagLoading(true);
+      try {
+        const response = await axios.post(
+          `${API_URL}/api/notes/tag-suggestion`,
+          { content: noteContent },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${user.token}`,
+            },
+          }
+        );
+        const suggestedTags = response.data?.msg.tags || [];
+        setTags(suggestedTags.map((tag) => ({ value: tag, label: tag })));
+      } catch (error) {
+        console.error("Error fetching tag suggestions:", error);
+      } finally {
+        setIsTagLoading(false);
+      }
+    },
+    [user.token]
+  );
+
+  // Debounced content change handler
+  const handleContentChange = (value) => {
+    setContent(value);
+
+    // Clear the previous timer
+    if (debounceTimer.current) {
+      clearTimeout(debounceTimer.current);
+    }
+
+    // Set a new debounce timer
+    debounceTimer.current = setTimeout(() => {
+      fetchTagSuggestions(value);
+    }, 2000);
   };
 
   const handleSubmit = async (event) => {
@@ -149,7 +129,6 @@ const NewNote = () => {
           Authorization: `Bearer ${user.token}`,
         },
       });
-
       navigate("/");
     } catch (error) {
       console.error("Error creating note:", error);
@@ -157,14 +136,6 @@ const NewNote = () => {
       setIsLoading(false);
     }
   };
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="w-32 h-32 border-t-2 border-b-2 border-blue-500 rounded-full animate-spin"></div>
-      </div>
-    );
-  }
 
   return (
     <div className="max-w-4xl p-6 mx-auto mt-10 bg-white rounded-lg shadow-lg">
@@ -180,6 +151,9 @@ const NewNote = () => {
         <CreatableSelect
           isMulti
           value={tags}
+          inputValue={inputValue}
+          onInputChange={handleInputChange}
+          onKeyDown={handleKeyDown}
           onChange={handleTagChange}
           placeholder="Add tags..."
           className="mb-6"
@@ -200,15 +174,6 @@ const NewNote = () => {
           value={content}
           onChange={handleContentChange}
           placeholder="Start writing here..."
-          modules={{
-            toolbar: [
-              [{ header: [1, 2, 3, false] }],
-              ["bold", "italic", "underline", "strike"],
-              [{ list: "ordered" }, { list: "bullet" }],
-              ["link", "image"],
-              ["clean"],
-            ],
-          }}
           className="min-h-[300px] mb-6"
         />
 
@@ -218,37 +183,11 @@ const NewNote = () => {
               isLoading
                 ? "opacity-50 cursor-not-allowed"
                 : "hover:bg-blue-700 hover:scale-105"
-            } focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}
+            }`}
             type="submit"
             disabled={isLoading}
           >
-            {isLoading ? (
-              <span className="flex items-center">
-                <svg
-                  className="w-5 h-5 mr-2 text-white animate-spin"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-                Saving...
-              </span>
-            ) : (
-              "Save Note"
-            )}
+            {isLoading ? "Saving..." : "Save Note"}
           </button>
         </div>
       </form>
