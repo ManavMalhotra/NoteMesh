@@ -4,8 +4,6 @@ const mongoose = require("mongoose");
 const noteSchema = new mongoose.Schema({
   title: {
     type: String,
-    minlength: 2,
-    required: true,
   },
   content: {
     type: String,
