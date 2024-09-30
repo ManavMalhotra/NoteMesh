@@ -18,7 +18,7 @@ import Note from "./components/Note";
 import { AuthProvider } from "./AuthContext";
 import "./index.css";
 import VerticalNav from "./components/VerticalNav";
-
+import { Analytics } from "@vercel/analytics/react"
 function App() {
   const navigate = useNavigate();
 
@@ -47,6 +47,7 @@ function App() {
   return (
     <React.StrictMode>
       <AuthProvider>
+        <Analytics />
         <div className="bg-[#F8F8F9] h-screen">
           <NavBar className="" />
           <Outlet className="" />
