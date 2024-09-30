@@ -33,7 +33,7 @@ function App() {
     const token = localStorage.getItem("token");
 
     // If no token or the token is expired, redirect to the login page
-    if (!token || isTokenExpired(token)) {
+    if (isTokenExpired(token)) {
       alert("Session expired. Please log in again.");
       localStorage.removeItem("token"); // Clear expired token from localStorage
       navigate("/login"); // Redirect to the login page
