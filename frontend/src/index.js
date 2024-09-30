@@ -47,11 +47,11 @@ function App() {
   return (
     <React.StrictMode>
       <AuthProvider>
-        <Analytics />
         <div className="bg-[#F8F8F9] h-screen">
           <NavBar className="" />
           <Outlet className="" />
         </div>
+        <Analytics />
       </AuthProvider>
     </React.StrictMode>
   );
